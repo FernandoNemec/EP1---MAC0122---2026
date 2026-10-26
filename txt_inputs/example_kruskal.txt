@@ -1,0 +1,6 @@
+Técnica: Método guloso
+Algoritmo: Kruskal para árvore espalhada mínima
+Autores: Joseph Kruskal
+Data: 1956
+Conceitos: Grafos, Árvores, árvore espalhada mínima, union-find
+Problema: Dado um grafo não dirigido com pesos nas arestas, determinar sua árvore espalhada mínima.
