@@ -100,7 +100,7 @@ Conforme as especificações do EP1, os seguintes itens compõem a entrega ofici
 | :--- | :--- |
 | Nome do Integrante 1 | 00000000 |
 | Nome do Integrante 2 | 00000000 |
-| Nome do Integrante 3 | 00000000 |
+| Davi Gaioso Manso     | 17862852 |
 | Fernando Nemec Vieira | 17889820 |
 
 ---
