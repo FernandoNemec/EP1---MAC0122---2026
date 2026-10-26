@@ -99,9 +99,9 @@ Conforme as especificações do EP1, os seguintes itens compõem a entrega ofici
 | Nome | NUSP |
 | :--- | :--- |
 | Nome do Integrante 1 | 00000000 |
-| Nome do Integrante 2 | 00000000 |
-| Davi Gaioso Manso     | 17862852 |
-| Fernando Nemec Vieira | 17889820 |
+| Alexandre Takaki Shiota | 17862744 |
+| Davi Gaioso Manso       | 17862852 |
+| Fernando Nemec Vieira   | 17889820 |
 
 ---
 *Projeto desenvolvido para a disciplina MAC0122 - Instituto de Matemática e Estatística da Universidade de São Paulo (IME-USP).*
