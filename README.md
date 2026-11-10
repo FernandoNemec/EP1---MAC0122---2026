@@ -27,6 +27,7 @@ Este repositório contém a implementação do **EP1 de MAC0122 (Princípios de 
      - Estruturas de Controle e Comandos (`if`, `for`, `while`, etc.)
      - Comentários de linha e de bloco (`//` e `/* ... */`)
      - Cadeias de Caracteres / Strings (`"texto\n"`)
+  Padrão Wikipedia: https://en.wikipedia.org/wiki/Syntax_highlighting
 
 ---
 
