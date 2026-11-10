@@ -1,0 +1,2 @@
+Highlighter:
+  - As implementações iniciais do Highliter, que inclui principalmente a função output_line_html, os enums e defines foram feitas por Fernando;
