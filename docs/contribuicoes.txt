@@ -1,2 +1,4 @@
 Highlighter:
-  - As implementações iniciais do Highliter, que inclui principalmente a função output_line_html, os enums e defines foram feitas por Fernando;
+  - As implementações iniciais do Highlighter, que inclui principalmente a função output_line_html, os enums e defines foram feitas por Fernando;
+  - Ajustes finos no html do Highlighter como as cores de Pragma e Data_type e ajustes de identação foram implementados por Fernando com a ajuda de Davi. As cores usadas foram precisamente as cores usadas pela Wikipedia e foram obtidas pela inspeção do código fonte da página online;
+  - Foi adicionado tanto para testes quanto para registro o arquivo c_sources/hello_world.c com a exata implementação do Hello_world que a wikipedia usa para mostrar o highlight em c;
