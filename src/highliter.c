@@ -17,6 +17,7 @@
 </html>"
 
 enum IDENTATION { NO_IDENTATION,
+                  SPACE,
                   ENTER,
                   TAB,
                   INIT_PARAGRAPH,
@@ -24,10 +25,14 @@ enum IDENTATION { NO_IDENTATION,
 };
 
 enum COLOR { NO_COLOR,
-             RED,
-             PINK,
-             GREEN,
-             BLUE
+             COMMENT,
+             PRAGMA,
+             LIB,
+             DATA_TYPE,
+             COMMAND,
+             FUNCTION,
+             STRING,
+             NUMBER
 };
 
 void output_line_html (int color, char* text, int* identation, int number_of_identations){
@@ -37,6 +42,9 @@ void output_line_html (int color, char* text, int* identation, int number_of_ide
   for(int i = 0; i < number_of_identations; i++){
     switch(identation[i]){
       case NO_IDENTATION:
+        printf("");
+        break;
+      case SPACE:
         printf(" ");
         break;
       case ENTER:
@@ -58,20 +66,32 @@ void output_line_html (int color, char* text, int* identation, int number_of_ide
 
   //Colored text output in html
   //Default falls into non colored texts
+  switch(color){
     case NO_COLOR:
       printf("%s",text);
       break;
-    case RED:
-      printf("<span style=\"color: red;\">%s</span>",text);
+    case COMMENT:
+      printf("<span style=\"color: #3D7B7B;\">%s</span>",text);
       break;
-    case PINK:
-      printf("<span style=\"color: pink;\">%s</span>",text);
+    case PRAGMA: printf("<span style=\"color: #9C6500;\">%s</span>",text);
       break;
-    case GREEN:
-      printf("<span style=\"color: green;\">%s</span>",text);
+    case LIB:
+      printf("<span style=\"color: #3D7B7B;\">%s</span>",text);
       break;
-    case BLUE:
-      printf("<span style=\"color: blue;\">%s</span>",text);
+    case DATA_TYPE:
+      printf("<span style=\"color: #B00040;\">%s</span>",text);
+      break;
+    case COMMAND:
+      printf("<span style=\"color: #008000;\">%s</span>",text);
+      break;
+    case FUNCTION:
+      printf("<span style=\"color: #00F;\">%s</span>",text);
+      break;
+    case STRING:
+      printf("<span style=\"color: #BA2121;\">%s</span>",text);
+      break;
+    case NUMBER:
+      printf("<span style=\"color: #666;\">%s</span>",text);
       break;
     default:
       printf("%s",text);
@@ -82,20 +102,44 @@ void output_line_html (int color, char* text, int* identation, int number_of_ide
 }
 
 int exemplo1 [1] = {INIT_PARAGRAPH};
-int exemplo2 [1] = {ENTER};
-int exemplo3 [1] = {TAB};
-int exemplo4 [2] = {ENTER,TAB};
-int exemplo5 [1] = {NO_IDENTATION};
-int exemplo6 [3] = {ENTER,ENTER,ENTER};
-int exemplo7 [1] = {END_PARAGRAPH};
+int exemplo2 [1] = {SPACE};
+int exemplo3 [1] = {ENTER};
+int exemplo4 [1] = {SPACE};
+int exemplo5 [2] = {ENTER,ENTER};
+int exemplo6 [1] = {SPACE};
+int exemplo7 [1] = {NO_IDENTATION};
+int exemplo8 [1] = {NO_IDENTATION};
+int exemplo9 [1] = {SPACE};
+int exemplo10 [2] = {ENTER,TAB};
+int exemplo11 [1] = {NO_IDENTATION};
+int exemplo12 [1] = {NO_IDENTATION};
+int exemplo13 [1] = {NO_IDENTATION};
+int exemplo14 [1] = {NO_IDENTATION};
+int exemplo15 [2] = {ENTER,TAB};
+int exemplo16 [1] = {SPACE};
+int exemplo17 [1] = {NO_IDENTATION};
+int exemplo18 [1] = {ENTER};
+int exemplo19 [1] = {END_PARAGRAPH};
 
 int main(){
-  output_line_html(RED,"Test1",exemplo1,1);
-  output_line_html(RED,"Test2",exemplo2,1);
-  output_line_html(PINK,"Test3",exemplo3,1);
-  output_line_html(GREEN,"Test4",exemplo4,2);
-  output_line_html(BLUE,"Test5",exemplo5,1);
-  output_line_html(NO_COLOR,"Test6",exemplo6,3);
-  output_line_html(BLUE,"Test7",exemplo7,1);
+  output_line_html(NO_COLOR,"",exemplo1,1);
+  output_line_html(COMMENT,"// Hello World",exemplo2,1);
+  output_line_html(PRAGMA,"#include",exemplo3,1);
+  output_line_html(LIB,"<stdio.h>",exemplo4,1);
+  output_line_html(DATA_TYPE,"int",exemplo5,2);
+  output_line_html(FUNCTION,"main",exemplo6,3);
+  output_line_html(NO_COLOR,"(",exemplo7,1);
+  output_line_html(NO_COLOR,")",exemplo8,1);
+  output_line_html(NO_COLOR,"{",exemplo9,1);
+  output_line_html(FUNCTION,"printf",exemplo10,2);
+  output_line_html(NO_COLOR,"(",exemplo11,1);
+  output_line_html(STRING,"\"Hello World\\n\"",exemplo12,1);
+  output_line_html(NO_COLOR,")",exemplo13,1);
+  output_line_html(NO_COLOR,";",exemplo14,1);
+  output_line_html(COMMAND,"return",exemplo15,1);
+  output_line_html(NUMBER,"0",exemplo16,1);
+  output_line_html(NO_COLOR,";",exemplo17,1);
+  output_line_html(NO_COLOR,"}",exemplo18,1);
+  output_line_html(NO_COLOR,"",exemplo19,1);
   return 0;
 }
