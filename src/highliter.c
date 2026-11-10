@@ -8,6 +8,9 @@
     <meta charset=\"UTF-8\">\n\
     <title>Higlighting of code in C</title>\n\
     <style>\n\
+      body {\n\
+      font-family: Arial, Helvetica, sans-serif;\n\
+      }\n\
     </style>\n\
 </head>\n\
 <body>\n"
