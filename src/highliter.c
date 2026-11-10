@@ -16,7 +16,6 @@
 </body>\n\
 </html>"
 
-//Define new identations here
 enum IDENTATION { NO_IDENTATION,
                   ENTER,
                   TAB,
@@ -24,7 +23,6 @@ enum IDENTATION { NO_IDENTATION,
                   END_PARAGRAPH
 };
 
-//Define new colors here
 enum COLOR { NO_COLOR,
              RED,
              PINK,
@@ -35,8 +33,7 @@ enum COLOR { NO_COLOR,
 void output_line_html (int color, char* text, int* identation, int number_of_identations){
 
   //Identation output in html
-  //The \n and \t outputed are meant to let the html clean and identaded for humam reading
-  //New identations can be added
+  //The \n and \t outputed are meant to let the html clean
   for(int i = 0; i < number_of_identations; i++){
     switch(identation[i]){
       case NO_IDENTATION:
@@ -56,18 +53,11 @@ void output_line_html (int color, char* text, int* identation, int number_of_ide
         printf("</p>");
         printf("%s",END_OF_FILE);
         return;
-      /*
-      case NEW_IDENTATION:
-        printf("identation implementation in html");
-        break;
-      */
     }
   }
 
   //Colored text output in html
-  //default falls into non colored texts
-  //New colors can be added
-  switch(color){
+  //Default falls into non colored texts
     case NO_COLOR:
       printf("%s",text);
       break;
@@ -83,11 +73,6 @@ void output_line_html (int color, char* text, int* identation, int number_of_ide
     case BLUE:
       printf("<span style=\"color: blue;\">%s</span>",text);
       break;
-    /*
-    case NEW_COLOR:
-      printf("<span style=\"color: color wanted;\">%s</span>",text);
-      break;
-    */
     default:
       printf("%s",text);
       break;
