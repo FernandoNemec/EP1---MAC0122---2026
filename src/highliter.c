@@ -13,9 +13,11 @@
       }\n\
     </style>\n\
 </head>\n\
-<body>\n"
+<body>\n\
+<p>\n\t"
 
 #define END_OF_FILE "\
+</p>\
 </body>\n\
 </html>"
 
@@ -45,7 +47,6 @@ void output_line_html (int color, char* text, int* identation, int number_of_ide
   for(int i = 0; i < number_of_identations; i++){
     switch(identation[i]){
       case NO_IDENTATION:
-        printf("");
         break;
       case SPACE:
         printf(" ");
@@ -58,10 +59,8 @@ void output_line_html (int color, char* text, int* identation, int number_of_ide
         break;
       case INIT_PARAGRAPH:
         printf("%s",HEADER);
-        printf("<p>\n\t");
         return;
       case END_PARAGRAPH:
-        printf("</p>");
         printf("%s",END_OF_FILE);
         return;
     }
@@ -105,7 +104,7 @@ void output_line_html (int color, char* text, int* identation, int number_of_ide
 }
 
 int exemplo1 [1] = {INIT_PARAGRAPH};
-int exemplo2 [1] = {SPACE};
+int exemplo2 [1] = {NO_IDENTATION};
 int exemplo3 [1] = {ENTER};
 int exemplo4 [1] = {SPACE};
 int exemplo5 [2] = {ENTER,ENTER};
