@@ -99,7 +99,7 @@ Conforme as especificações do EP1, os seguintes itens compõem a entrega ofici
 
 | Nome | NUSP |
 | :--- | :--- |
-| Nome do Integrante 1 | 00000000 |
+| André Tamay Honda | 17878515|
 | Alexandre Takaki Shiota | 17862744 |
 | Davi Gaioso Manso       | 17862852 |
 | Fernando Nemec Vieira   | 17889820 |
