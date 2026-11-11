@@ -33,22 +33,23 @@ int is_delimiter(char c) {
 int isDataType(char srcCode[], int idx);
 int isCommand(char srcCode[], int idx);
 
-int isIdentation(char c) {
+int isIdentation(char c, int *idx_identation, enum IDENTATION identation[]) {
   switch (c) {
   case ' ':
-    identation[] = SPACE;
+    identation[(*idx_identation)++] = SPACE;
     return 1;
   }
   case '\n':
-    identation[] = ENTER;
+    identation[*(idx_identation)++] = ENTER;
     return 1;
   }
   case '\t':
-    identation[] = TAB;
+    identation[*(idx_identation)++] = TAB;
     return 1;
   }
   default:
-    identation[] = NO_IDENTATION;
+    if(idx_identation == 0)
+      identation[*(idx_identation)++] = NO_IDENTATION;
     return 0;
   }
 }
@@ -56,26 +57,36 @@ int isIdentation(char c) {
 void parser(char srcCode[], int *idx, enum COLOR *state);
 
 int main(int argc, char *argv[]) {
+
   char exemplo[] =
       "#include <stdio.h>\n\nint main () {\n\tint exemplo = 0;\n\treturn exemplo;\n}";
+
   int idx = 0;
+  int idx_identation;
+
   int end = strlen(exemplo);
+
   enum COLOR color = NO_COLOR;
-  enum IDENTATION identation[];
+  enum IDENTATION identation[100];
 
   while (idx != end) {
-    parser(exemplo, &idx, &color, identation);
+    parser(exemplo, &idx, &color, identation, &idx_identation);
     printf("idx: %d color: %d\n", idx, color);
   }
 
   return 0;
 }
 
-void parser(char srcCode[], int *idx, enum COLOR *state, enum IDENTATION identation) {
-  int commentType;
+void parser(char srcCode[], int *idx, enum COLOR *state, enum IDENTATION identation[], int *idx_identation) {
+
   int beginning = *idx;
+  *idx_identation = 0;
+
+  int commentType;
   char closeString;
+
   while (srcCode[*idx] != '\0') {
+
     char c = srcCode[*idx];
     char next_c = srcCode[*idx + 1];
 
@@ -83,10 +94,10 @@ void parser(char srcCode[], int *idx, enum COLOR *state, enum IDENTATION identat
     case NO_COLOR:
 
       //Identation
-      if(isIdentation(c)){
+      while(isIdentation(c, &idx_identation, identation)){
         (*idx)++;
-        break;
       }
+      beginning = *idx;
 
       // Comments
       if (c == '/' && (next_c == '/' || next_c == '*')) {
@@ -122,10 +133,11 @@ void parser(char srcCode[], int *idx, enum COLOR *state, enum IDENTATION identat
       if (isdigit(c))
         *state = NUMBER;
 
-      if (*state != NO_COLOR && *idx != beginning) {
-        *state = NO_COLOR;
-        return;
-      }
+      //DAVO, isso não é desnecessário? Não consegui ver quando entraria nesse if não...
+      //if (*state != NO_COLOR && *idx != beginning) {
+      //  *state = NO_COLOR;
+      //  return;
+      //}
 
       (*idx)++;
       break;
