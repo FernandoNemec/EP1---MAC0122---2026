@@ -19,7 +19,7 @@ enum COLOR {
 };
 
 int is_delimiter(char c) {
-  return c == ' ' || c == '(' || c == ')' || c == '*' || c == '\n';
+  return c == ' ' || c == '(' || c == ')' || c == '*' || c == '\n' || c == '\t';
 }
 
 int isDataType(char srcCode[], int idx);
@@ -29,7 +29,7 @@ void parser(char srcCode[], int *idx, enum COLOR *state);
 
 int main(int argc, char *argv[]) {
   char exemplo[] =
-      "#include <stdio.h>\nint main () {\nint exemplo = 0;\nreturn exemplo;\n}";
+      "#include <stdio.h>\n\nint main () {\n\tint exemplo = 0;\n\treturn exemplo;\n}";
   int idx = 0;
   int end = strlen(exemplo);
   enum COLOR color = NO_COLOR;
@@ -90,6 +90,7 @@ void parser(char srcCode[], int *idx, enum COLOR *state) {
         *state = NO_COLOR;
         return;
       }
+
       (*idx)++;
       break;
 
@@ -184,6 +185,7 @@ void parser(char srcCode[], int *idx, enum COLOR *state) {
       break;
     }
   }
+  return;
 }
 
 int isDataType(char srcCode[], int idx) { return 0; }
