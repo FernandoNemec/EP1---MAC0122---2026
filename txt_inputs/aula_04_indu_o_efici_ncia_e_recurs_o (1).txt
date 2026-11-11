@@ -1,0 +1,81 @@
+AULA 04: INDUCAO, EFICIENCIA, RECURSIVIDADE E DIVISAO E CONQUISTA
+
+1. Inducao Matematica
+- Conceito: A inducao e uma tecnica de demonstracao matematica que serve como base formal para o funcionamento de algoritmos, especialmente os recursivos. Ela funciona em duas etapas:
+  * Passo Base: Prova-se que a afirmacao e verdadeira para o primeiro elemento (ex: n igual a 1).
+  * Passo Indutivo: Assume-se que e verdadeira para um valor k (hipotese de inducao) e prova-se que tambem e verdadeira para k mais 1.
+- Aplicacao: Usada para provar a corretude de lacos (invariantes de laco) e funcoes recursivas.
+- [REFERENCIA EXTERNA: "Algoritmos: Teoria e Pratica" (Cormen, Leiserson, Rivest, Stein), Capitulo 2 (Invariantes de laco) e Apendice A (Series e Inducao)].
+- [REFERENCIA EXTERNA: "Introduction to Algorithms: A Creative Approach" (Udi Manber) - Excelente abordagem focada em criar algoritmos a partir de provas por inducao].
+
+2. Eficiencia de Programas
+- Avaliar a eficiencia significa medir o consumo de recursos de um algoritmo em funcao do tamanho da entrada representada por n.
+- Complexidade de Tempo: Quanto tempo o programa leva para rodar? Medido geralmente pela contagem de operacoes primitivas usando a Notacao Assintotica (ex: linear, linear-logaritimica, exponencial).
+- Complexidade de Espaco: Quanta memoria adicional o programa exige?
+- Trade-off Espaco-Tempo: Muitas vezes, podemos tornar um algoritmo mais rapido usando mais memoria (exemplo: tabelas de memorizacao).
+- [REFERENCIA EXTERNA: "Estruturas de Dados e Seus Algoritmos" (Szwarcfiter, Markenzon), Capitulo 1 - Conceitos Basicos e Analise de Algoritmos].
+
+3. Recursividade
+- Definicao: Uma funcao diz-se recursiva se ela chama a si mesma durante a sua execucao.
+- Elementos obrigatorios:
+  * Criterio de Parada (Caso Base): A condicao que interrompe as chamadas recursivas, evitando um loop infinito (estouro de pilha).
+  * Chamada Recursiva: Onde a funcao invoca a si mesma com um subproblema menor.
+- Exemplo Pratico (Soma de Naturais):
+  
+  Abordagem Padrao (Recursao Simples):
+  int soma_naturais(int n) {
+      if (n == 0) return 0;
+      return n + soma_naturais(n - 1);
+  }
+
+  Abordagem com Tabela (Memorizacao):
+  // Assumindo que a tabela foi inicializada com valores invalidos
+  int tabela[1000]; 
+  
+  int soma_naturais_tabela(int n) {
+      if (n == 0) return 0;
+      if (tabela[n] != -1) return tabela[n];
+      
+      tabela[n] = n + soma_naturais_tabela(n - 1);
+      return tabela[n];
+  }
+
+- [REFERENCIA EXTERNA: "Projeto de Algoritmos com Implementacoes em Pascal e C" (Nivio Ziviani), Capitulo 2 - Recursividade e Pilhas].
+
+4. Divisao e Conquista
+- Paradigma de design de algoritmos que segue tres passos:
+  1. Dividir: Quebrar o problema original em subproblemas menores e independentes do mesmo tipo.
+  2. Conquistar: Resolver os subproblemas recursivamente.
+  3. Combinar: Juntar as solucoes dos subproblemas para formar a solucao do problema original.
+
+5. Exemplo Classico: Torres de Hanoi
+- O Problema: Mover n discos de uma haste de origem para uma haste de destino, usando uma haste auxiliar, sem nunca colocar um disco maior sobre um menor.
+- Solucao (Divisao e Conquista):
+  1. Mover os discos menores para a haste auxiliar.
+  2. Mover o disco maior (base) para a haste de destino.
+  3. Mover os discos da haste auxiliar para a haste de destino.
+
+- Codigo Pratico em C:
+  void hanoi(int n, char origem, char destino, char auxiliar) {
+      if (n == 1) {
+          printf("Mova o disco 1 de %c para %c\n", origem, destino);
+          return;
+      }
+      hanoi(n - 1, origem, auxiliar, destino);
+      printf("Mova o disco %d de %c para %c\n", n, origem, destino);
+      hanoi(n - 1, auxiliar, destino, origem);
+  }
+
+- Eficiencia: A relacao de recorrencia resulta em um crescimento exponencial na quantidade de passos realizados conforme o total de discos aumenta. É um algoritmo de tempo exponencial, mostrando que, mesmo sendo otimo para o problema, torna-se inviavel para um numero alto de discos.
+- [REFERENCIA EXTERNA: "Algoritmos: Teoria e Pratica" (Cormen et al.), contexto de recorrencias e arvores de recursao].
+- [REFERENCIA EXTERNA: "Matematica Discreta e Suas Aplicacoes" (Kenneth H. Rosen), Secao sobre Modelagem com Relacoes de Recorrencia].
+
+6. Continuacao: Outros Problemas Resolvidos por Divisao e Conquista
+- Busca Binaria:
+  * Descricao: Dado um vetor ordenado, busca um elemento dividindo o espaco de busca ao meio a cada passo.
+  * Complexidade: Logaritimica em relacao ao tamanho da entrada.
+- Exponenciacao Rapida (Calculo de potencia de uma base elevada a um expoente):
+  * Abordagem Ingenua: Multiplicacoes sucessivas lineares.
+  * Abordagem por Divisao e Conquista: Se o expoente e par, a potencia pode ser obtida elevando a base a metade do expoente e multiplicando o resultado por ele mesmo. Se o expoente e impar, ajusta-se a multiplicacao de forma similar reduzindo o expoente.
+  * Complexidade: Logaritimica.
+- [REFERENCIA EXTERNA: "Algoritmos: Teoria e Pratica" (Cormen et al.), Capitulo 4 - Dividir para Conquistar].
