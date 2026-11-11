@@ -1,11 +1,53 @@
-// Falta implementar os casso de DATA_TYPE e COMMAND
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #define LINE_COMMENT 1
 #define BLOCK_COMMENT 2
+#define NUM_DATA_TYPES 10
+#define NUM_COMMANDS 35
 
-enum IDENTATION { 
+char KEY_DATAS[][10] = {"bool",  "char",   "int",      "float", "double",
+                        "short", "signed", "unsigned", "long",  "void"};
+
+char KEY_COMMANDS[][15] = {
+    "alignas",
+    "alignof",
+    "auto",
+    "break",
+    "case",
+    "const",
+    "constexpr",
+    "continue",
+    "default",
+    "do",
+    "else",
+    "enum",
+    "extern",
+    "false",
+    "for",
+    "goto",
+    "if",
+    "inline",
+    "nullptr",
+    "register",
+    "restrict",
+    "return",
+    "sizeof",
+    "static",
+    "static_assert",
+    "struct",
+    "switch",
+    "thread_local",
+    "true",
+    "typedef",
+    "typeof",
+    "typeof_unqual",
+    "union",
+    "volatile",
+    "while",
+};
+
+enum IDENTATION {
   NO_IDENTATION,
   SPACE,
   ENTER,
@@ -30,36 +72,34 @@ int is_delimiter(char c) {
   return c == ' ' || c == '(' || c == ')' || c == '*' || c == '\n' || c == '\t';
 }
 
-int isDataType(char srcCode[], int idx);
-int isCommand(char srcCode[], int idx);
+int isDataType(char srcCode[], int *idx);
+int isCommand(char srcCode[], int *idx);
 
 int isIdentation(char c, int *idx_identation, enum IDENTATION identation[]) {
   switch (c) {
   case ' ':
     identation[(*idx_identation)++] = SPACE;
     return 1;
-  }
   case '\n':
     identation[*(idx_identation)++] = ENTER;
     return 1;
-  }
   case '\t':
     identation[*(idx_identation)++] = TAB;
     return 1;
-  }
   default:
-    if(idx_identation == 0)
+    if (idx_identation == 0)
       identation[*(idx_identation)++] = NO_IDENTATION;
     return 0;
   }
 }
 
-void parser(char srcCode[], int *idx, enum COLOR *state);
+void parser(char srcCode[], int *idx, enum COLOR *state,
+            enum IDENTATION identation[], int *idx_identation);
 
 int main(int argc, char *argv[]) {
 
-  char exemplo[] =
-      "#include <stdio.h>\n\nint main () {\n\tint exemplo = 0;\n\treturn exemplo;\n}";
+  char exemplo[] = "#include <stdio.h>\n\nint main () {\n\tint exemplo = "
+                   "0;\n\treturn exemplo;\n}";
 
   int idx = 0;
   int idx_identation;
@@ -77,7 +117,8 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-void parser(char srcCode[], int *idx, enum COLOR *state, enum IDENTATION identation[], int *idx_identation) {
+void parser(char srcCode[], int *idx, enum COLOR *state,
+            enum IDENTATION identation[], int *idx_identation) {
 
   int beginning = *idx;
   *idx_identation = 0;
@@ -93,8 +134,8 @@ void parser(char srcCode[], int *idx, enum COLOR *state, enum IDENTATION identat
     switch (*state) {
     case NO_COLOR:
 
-      //Identation
-      while(isIdentation(c, &idx_identation, identation)){
+      // Identation
+      while (isIdentation(c, idx_identation, identation)) {
         (*idx)++;
       }
       beginning = *idx;
@@ -113,12 +154,13 @@ void parser(char srcCode[], int *idx, enum COLOR *state, enum IDENTATION identat
         *state = PRAGMA;
 
       // Data type
-      if (isDataType(srcCode, *idx)) {
+      if (isDataType(srcCode, idx)) {
         *state = DATA_TYPE;
+        return;
       }
 
       // Command
-      if (isCommand(srcCode, *idx)) {
+      if (isCommand(srcCode, idx)) {
         *state = COMMAND;
         return;
       }
@@ -133,11 +175,11 @@ void parser(char srcCode[], int *idx, enum COLOR *state, enum IDENTATION identat
       if (isdigit(c))
         *state = NUMBER;
 
-      //DAVO, isso não é desnecessário? Não consegui ver quando entraria nesse if não...
-      //if (*state != NO_COLOR && *idx != beginning) {
-      //  *state = NO_COLOR;
-      //  return;
-      //}
+      // DAVO, isso não é desnecessário? Não consegui ver quando entraria
+      // nesse if não... if (*state != NO_COLOR && *idx != beginning) {
+      //   *state = NO_COLOR;
+      //   return;
+      // }
 
       (*idx)++;
       break;
@@ -190,12 +232,9 @@ void parser(char srcCode[], int *idx, enum COLOR *state, enum IDENTATION identat
       break;
 
     case DATA_TYPE:
-      if (*idx == beginning) {
-        *state = NO_COLOR;
-        continue;
-      }
       // Atribuir variavel ou type cast
       if (c == '=' || c == ')') {
+        *state = NO_COLOR;
         return;
       }
       // Declarar funcao
@@ -231,7 +270,7 @@ void parser(char srcCode[], int *idx, enum COLOR *state, enum IDENTATION identat
         *state = NO_COLOR;
         continue;
       }
-      if (!isdigit(c)){
+      if (!isdigit(c)) {
         (*idx)++;
         return;
       }
@@ -242,6 +281,36 @@ void parser(char srcCode[], int *idx, enum COLOR *state, enum IDENTATION identat
   return;
 }
 
-int isDataType(char srcCode[], int idx) { return 0; }
+int isDataType(char srcCode[], int *idx) {
+  if (!is_delimiter(srcCode[*idx]))
+    return 0;
+  for (int i = 0; i < NUM_DATA_TYPES; i++) {
+    char *keyword = KEY_DATAS[i];
+    for (int j = 0; j < strlen(keyword); j++) {
+      if (srcCode[*idx + j] != keyword[j])
+        break;
+      if (j + 1 == strlen(keyword) && is_delimiter(srcCode[j + 1])) {
+        *idx += j + 1;
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
 
-int isCommand(char srcCode[], int idx) { return 0; }
+int isCommand(char srcCode[], int *idx) {
+  if (!is_delimiter(srcCode[*idx]))
+    return 0;
+  for (int i = 0; i < NUM_COMMANDS; i++) {
+    char *keyword = KEY_COMMANDS[i];
+    for (int j = 0; j < strlen(keyword); j++) {
+      if (srcCode[*idx + j] != keyword[j])
+        break;
+      if (j + 1 == strlen(keyword) && is_delimiter(srcCode[j + 1])) {
+        *idx += j + 1;
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
