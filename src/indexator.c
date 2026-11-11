@@ -14,22 +14,24 @@
     </style>\n\
 </head>\n\
 <body>\n\
-<p>\n\t"
+<p>\n"
 
 #define END_OF_FILE "\
-</p>\
+</p>\n\
 </body>\n\
 </html>"
 
 void output_hiperlink (char* text, char* link){
 
-  printf("<a href=%s>%s</a><br>\n\t",text,link);
+  printf("\t<a href=%s>%s</a><br>\n",text,link);
 
   return;
 }
 
 int main() {
+  printf("%s",HEADER);
   output_hiperlink("google","https://www.google.com");
   output_hiperlink("youtube","https://www.youtube.com");
+  printf("%s",END_OF_FILE);
   return 0;
 }
