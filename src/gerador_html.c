@@ -95,12 +95,36 @@ void processar_arquivo_txt(const char *nome_arquivo) {
     fclose(file);
 }
 
+
+/* ==========================================================================
+ * FUNÇÃO DE CABEÇALHO E CSS (INSERIR ANTES DAS FUNÇÕES DE GERAÇÃO)
+ * ========================================================================== */
+void imprimir_cabecalho_html(FILE *f, const char *titulo) {
+    fprintf(f, "<!DOCTYPE html>\n<html lang=\"pt\">\n<head>\n");
+    fprintf(f, "<meta charset=\"UTF-8\">\n<title>%s</title>\n", titulo);
+    fprintf(f, "<style>\n");
+    fprintf(f, "  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; background-color: #f8f9fa; color: #333; line-height: 1.6; }\n");
+    fprintf(f, "  h1, h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }\n");
+    fprintf(f, "  ul { list-style-type: square; padding-left: 20px; }\n");
+    fprintf(f, "  li { margin-bottom: 10px; }\n");
+    fprintf(f, "  a { color: #3498db; text-decoration: none; font-weight: 500; transition: color 0.3s; }\n");
+    fprintf(f, "  a:hover { color: #e74c3c; text-decoration: underline; }\n");
+    fprintf(f, "  hr { border: 0; height: 1px; background: #ddd; margin: 20px 0; }\n");
+    fprintf(f, "</style>\n");
+    fprintf(f, "</head>\n<body>\n");
+}
+
+
 /* ==========================================================================
  * GERAÇÃO DOS ÍNDICES E SUBPÁGINAS
  * ========================================================================== */
 void gerar_index_principal() {
     FILE *f = fopen("index.html", "w");
     if (!f) return;
+
+    // Chama a estilização
+    imprimir_cabecalho_html(f, "Índice MAC122");
+
     fprintf(f, "<!DOCTYPE html>\n<html lang=\"pt\">\n<head><meta charset=\"UTF-8\"><title>Índice MAC122</title></head>\n<body>\n");
     fprintf(f, "<h1>Índice de Conteúdo MAC122</h1>\n<ul>\n");
     fprintf(f, "<li><a href=\".idx/idx_tecnica.html\">1. Técnicas</a></li>\n");
@@ -117,7 +141,8 @@ void gerar_pagina_indexadora_com_subpaginas(const char* nome_arquivo, const char
     FILE *f = fopen(nome_arquivo, "w");
     if (!f) return;
 
-    fprintf(f, "<!DOCTYPE html>\n<html><head><meta charset=\"UTF-8\"><title>%s</title></head><body>\n", titulo);
+    // Chama a estilização
+    imprimir_cabecalho_html(f, titulo);
     fprintf(f, "<h1>%s</h1>\n<ul>\n", titulo);
     
     int processados[MAX_PAGINAS] = {0}; 
@@ -138,7 +163,7 @@ void gerar_pagina_indexadora_com_subpaginas(const char* nome_arquivo, const char
         
         // Cria a subpágina para esta categoria específica
         FILE *f_sub = fopen(nome_subpagina, "w");
-        fprintf(f_sub, "<!DOCTYPE html>\n<html><head><meta charset=\"UTF-8\"><title>%s</title></head><body>\n", valor_atual);
+        imprimir_cabecalho_html(f_sub, valor_atual); // Aplica estilo na subpágina
         fprintf(f_sub, "<h1>Categoria: %s</h1>\n<ul>\n", valor_atual);
         
         // Busca todos os TXTs que pertencem a esta mesma categoria
@@ -166,7 +191,7 @@ void gerar_pagina_indexadora_conceitos(const char* nome_arquivo, const char* tit
     FILE *f = fopen(nome_arquivo, "w");
     if (!f) return;
 
-    fprintf(f, "<!DOCTYPE html>\n<html><head><meta charset=\"UTF-8\"><title>%s</title></head><body>\n", titulo);
+    imprimir_cabecalho_html(f, titulo);
     fprintf(f, "<h1>%s</h1>\n<ul>\n", titulo);
 
     char conceitos_unicos[1000][128]; // Vetor para armazenar os conceitos sem repetição
@@ -212,7 +237,7 @@ void gerar_pagina_indexadora_conceitos(const char* nome_arquivo, const char* tit
         
         // Cria a subpágina (ex: cat_conceito_1.html)
         FILE *f_sub = fopen(nome_subpagina, "w");
-        fprintf(f_sub, "<!DOCTYPE html>\n<html><head><meta charset=\"UTF-8\"><title>%s</title></head><body>\n", conceitos_unicos[c]);
+        imprimir_cabecalho_html(f_sub, conceitos_unicos[c]); // Aplica estilo na subpágina
         fprintf(f_sub, "<h1>Conceito: %s</h1>\n<ul>\n", conceitos_unicos[c]);
         
         // Varrer de novo os algoritmos para ver quais têm este conceito
@@ -257,7 +282,8 @@ void gerar_pagina_conteudo(PaginaDados *pagina) {
     FILE *html = fopen(pagina->arquivo_destino_html, "w");
     FILE *txt = fopen(pagina->arquivo_origem, "r");
     
-    fprintf(html, "<!DOCTYPE html>\n<html><head><meta charset=\"UTF-8\"><title>%s</title></head><body>\n", pagina->algoritmo);
+    imprimir_cabecalho_html(html, pagina->algoritmo); // Aplica estilo à página do algoritmo
+ 
     fprintf(html, "<h2>Detalhes:</h2><ul>");
     if(strlen(pagina->tecnica) > 0) fprintf(html, "<li><b>Técnica:</b> %s</li>", pagina->tecnica);
     if(strlen(pagina->algoritmo) > 0) fprintf(html, "<li><b>Algoritmo:</b> %s</li>", pagina->algoritmo);
@@ -301,6 +327,7 @@ int pasta_tem_arquivos(const char *caminho) {
     closedir(dir);
     return 0; // Pasta está completamente vazia
 }
+
 
 /* ==========================================================================
  * FUNÇÃO PRINCIPAL
