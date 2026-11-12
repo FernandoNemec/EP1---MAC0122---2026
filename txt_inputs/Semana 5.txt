@@ -1,0 +1,86 @@
+AULA 09: ESTABILIDADE, ORDENACAO EM TEMPO LINEAR, CONJUNTOS E HASHING
+
+1. Estabilidade em Algoritmos de Ordenacao
+- O que e: Um algoritmo e considerado "estavel" se ele preserva a ordem relativa de elementos que possuem chaves iguais.
+- Por que importa? Imagine que voce tem uma lista de alunos ja ordenada por Ordem Alfabetica. Se voce aplicar uma nova ordenacao por Notas, um algoritmo estavel garantira que os alunos com a mesma nota continuem em ordem alfabetica entre si.
+- Algoritmos Estaveis: Insercao, Bolha, Merge Sort.
+- Algoritmos Instaveis: Selecao, Quick Sort, Heap Sort.
+
+2. Ordenacao em Tempo Linear - O(n) (Sem comparacoes diretas)
+- A ideia central (Radix Sort / Counting Sort): Em vez de comparar se "A e maior que B", usamos os proprios valores dos elementos como indices de um vetor auxiliar para contar suas frequencias (distribuicao).
+- Exemplo Pratico em C (Ordenacao por Frequencia para inteiros):
+  
+  void ordena_frequencia(int v[], int n, int valor_maximo) {
+      // Cria um vetor de frequencias preenchido com zeros
+      int *freq = (int*) calloc(valor_maximo + 1, sizeof(int));
+      int i, k = 0;
+      
+      // Conta a ocorrencia de cada elemento de v
+      for (i = 0; i < n; i++) {
+          freq[v[i]]++;
+      }
+      
+      // Reescreve o vetor original usando as frequencias computadas
+      for (i = 0; i <= valor_maximo; i++) {
+          while (freq[i] > 0) {
+              v[k++] = i;
+              freq[i]--;
+          }
+      }
+      free(freq);
+  }
+
+3. Ordenacao de Strings (Nomes) e Otimizacao de Trocas
+- O Custo: Ordenar strings com Bubble Sort envolve comparar caracteres e fazer trocas copiando o texto byte a byte (usando strcpy). Isso e muito lento e consome O(n^2) operacoes de manipulacao de memoria pesada.
+- A Solucao (Vetor de Ordem / Ponteiros): Em vez de mover as strings inteiras de posicao na memoria, criamos um vetor de inteiros (ou ponteiros) que apenas guarda a ORDEM de acesso. Quando uma troca e necessaria, trocamos apenas dois inteiros de lugar, sem mover o texto original. Isso derruba drasticamente o tempo de execucao.
+
+4. Resumo Consolidado de Complexidade (Ordenacao)
+- O(n^2): Metodos simples e iterativos (Selecao, Insercao, Bolha). Ideais apenas para vetores pequenos ou quase ordenados (Insercao).
+- O(n log n): Metodos baseados em Divisao e Conquista (Quick Sort, Merge Sort, Heap Sort). O Quick Sort tem pior caso O(n^2), mas e o mais rapido na pratica em casos medios. O Merge e o Heap garantem O(n log n) em qualquer cenario.
+- O(n): Metodos baseados em distribuicao (Radix Sort, Counting Sort). Limitados a chaves de dados especificas (como inteiros pequenos ou strings de tamanho fixo), exigem memoria extra.
+
+5. Representacao de Conjuntos na Memoria
+- Metodo 1: Vetor Linear (Busca tradicional)
+  * Como e: Guarda os elementos sequencialmente. x pertence a V se existir um i tal que V[i] == x.
+  * Complexidades: Busca O(n); Insercao O(n) (precisa checar duplicidade); Remocao O(n); Esvaziar O(1) (basta zerar o contador de tamanho).
+- Metodo 2: Vetor de Bits (Mapeamento Direto)
+  * Como e: O elemento funciona como o proprio indice. x pertence a V se V[x] == 1.
+  * Complexidades: Busca O(1); Insercao O(1); Remocao O(1); Esvaziar O(n) (precisa zerar todo o vetor).
+
+6. Tabelas de Espalhamento (Hashing)
+- A Ponte: Como usar a incrivel velocidade do "Vetor de Bits" (Acesso O(1)) quando os nossos dados sao Strings em vez de Inteiros puros?
+- A Funcao Hash: Criamos uma funcao f que recebe uma string e cospe um numero inteiro entre 0 e N-1. Esse numero sera o indice no vetor.
+- Exemplo basico de Funcao f: Somar os valores ASCII dos caracteres da string e calcular o modulo (resto da divisao) por N.
+  
+  int hash_string(char *str, int N) {
+      int soma = 0, i;
+      for (i = 0; str[i] != '\0'; i++) {
+          soma += str[i];
+      }
+      return soma % N;
+  }
+
+- O Problema: Colisoes! A palavra "abc" tem a mesma soma que "cba". Ambas cairao na mesma posicao do vetor.
+- Solucoes:
+  1) Usar uma funcao hash melhor que considere a posicao das letras (multiplicando por fatores primos).
+  2) Tratamento de colisao: Se o indice calculado ja estiver ocupado, andar linearmente pelo final do vetor para alocar o elemento repetido (Enderecamento Aberto). O ideal e dimensionar N adequadamente para ter o minimo possivel de colisoes.
+
+---
+
+7. GUIA DA LISTA DE EXERCICIOS 1: ORDENACAO E COMPLEXIDADE
+
+- Exercicio 1: Simulacao com {7, 5, 3, 6, 3, 9, 8, 4} (n=8)
+  * Dica para o Heap: Primeiro represente o array como uma arvore binaria (Raiz=7; Filhos=5 e 3...). Mostre a fase de "Construcao do Heap Maximo" (onde os pais ficam maiores que os filhos). Depois simule as extracoes: a raiz sai, o ultimo elemento sobre para a raiz e "desce" trocando com o maior filho ate restaurar o Heap.
+
+- Exercicio 2: Pior caso do Quick Sort para n=8
+  * Resposta: Para que o Quick Sort seja quadratico, o pivo deve sempre deixar um dos lados da particao vazio. Se a implementacao escolhe sempre o ULTIMO elemento como pivo, basta fornecer um vetor ja ordenado (crescente ou decrescente).
+  * Exemplo: {1, 2, 3, 4, 5, 6, 7, 8}. O pivo sera 8. A particao percorrera 7 elementos para colocar ninguem a direita do 8. Na proxima chamada, o pivo sera 7, e assim sucessivamente. Resultando em (7 + 6 + 5 + ... + 1) comparacoes, ou seja, O(n^2).
+
+- Exercicio 3: Prova do Heap Sort por Inducao
+  * O Invariante: No inicio de cada iteracao i (onde i vai de n-1 ate 1), o subvetor V[0...i] e um Heap Maximo valido contendo os (i+1) menores elementos de todo o vetor, e o subvetor V[i+1...n-1] contem os (n-1-i) maiores elementos ordenados.
+  * Base: Antes da primeira extracao, V[0...n-1] foi construido como Heap. V[n...n-1] (vazio) esta trivialmente ordenado.
+  * Passo Indutivo: Troca-se a raiz do heap V[0] (que e o maior) com V[i]. Agora V[i] esta em sua posicao final ordenada. O heap diminuiu em 1. Chama-se 'refaz_heap' em V[0...i-1] que garante que o novo topo volte a ser o maior entre os restantes. Logo, a propriedade se mantem para a proxima iteracao.
+
+- Exercicio 4: Implementar Quick Sort sem Recursao
+  * Resposta: Toda recursao usa a "Pilha de Chamadas" (Call Stack) do sistema operacional. Para remover a recursao natural do Quick Sort, voce deve criar manualmente a estrutura de dados PILHA (Stack) no seu codigo em C. 
+  * A cada particionamento, em vez de chamar a funcao novamente para a esquerda e para a direita, voce empilha os limites (esq, dir) do subvetor da esquerda e os limites (esq, dir) do subvetor da direita. Depois, basta um laco 'while(pilha_nao_vazia)' que desempilha um par de limites, particiona essa regiao, e empilha os novos limites resultantes, ate que todos os subvetores tenham tamanho 1.

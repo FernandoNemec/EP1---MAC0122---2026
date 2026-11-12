@@ -1,0 +1,122 @@
+AULA 11: ESTRUTURAS DE DADOS LINEARES - PILHAS E FILAS
+
+1. Introducao aos Conceitos de Pilhas e Filas
+- Estruturas Lineares: Diferente das arvores e grafos, as pilhas e filas organizam os dados em uma sequencia unica (um elemento atras do outro). O que muda entre elas e a REGRA de acesso, insercao e remocao.
+
+- Pilha (Stack):
+  * Regra: LIFO (Last In, First Out) - O ultimo elemento a entrar sera obrigatoriamente o primeiro a sair.
+  * Analogia: Uma pilha de pratos. Voce so pode colocar um prato novo no topo e so pode retirar o prato que esta no topo.
+  * Uso na Computacao: O botao "Desfazer" (Ctrl+Z) dos editores de texto; o historico de navegacao de paginas web; a memoria de chamadas de funcoes (Call Stack) que vimos ao estudar recursao.
+
+- Fila (Queue):
+  * Regra: FIFO (First In, First Out) - O primeiro elemento a entrar sera o primeiro a sair.
+  * Analogia: Uma fila de banco. Quem chega primeiro, e atendido primeiro. Quem chega depois, entra no final da fila.
+  * Uso na Computacao: Fila de impressao (documentos aguardando a impressora); agendamento de tarefas no processador; buffers de rede.
+
+---
+
+2. Implementacao de Pilha Simples usando Vetor
+- A logica: Usamos um array (vetor) de tamanho fixo MAX e uma variavel inteira chamada "topo" que guarda o indice do ultimo elemento inserido.
+- Vantagens: Muito simples e rapida.
+- Desvantagens: Tem tamanho maximo limitado. Se a pilha encher, ocorre o erro de "Stack Overflow".
+
+- Codigo em C:
+  #define MAX 100
+
+  typedef struct {
+      int itens[MAX];
+      int topo;
+  } PilhaVetor;
+
+  void inicializa_pilha_vetor(PilhaVetor *p) {
+      p->topo = -1; // -1 indica que a pilha esta vazia
+  }
+
+  void push_vetor(PilhaVetor *p, int valor) {
+      if (p->topo < MAX - 1) { // Verifica se ha espaco
+          p->topo++;
+          p->itens[p->topo] = valor;
+      } else {
+          printf("Erro: Pilha cheia (Stack Overflow)\n");
+      }
+  }
+
+  int pop_vetor(PilhaVetor *p) {
+      if (p->topo != -1) { // Verifica se nao esta vazia
+          int valor = p->itens[p->topo];
+          p->topo--;
+          return valor;
+      }
+      printf("Erro: Pilha vazia\n");
+      return -1;
+  }
+
+---
+
+3. Implementacao de Pilha usando Lista Encadeada Simples
+- A logica: Em vez de um vetor limitante, alocamos memoria dinamicamente (usando malloc) para cada novo elemento que entra. O "topo" da pilha e apenas um ponteiro para o primeiro no da lista ligada.
+- Vantagens: Tamanho dinamico (so acaba quando acabar a memoria RAM do computador).
+- Desvantagens: Gasta um pouco mais de memoria por causa do ponteiro "prox" e exige gerenciamento manual (free).
+
+- Codigo em C:
+  #include <stdlib.h>
+
+  typedef struct No {
+      int info;
+      struct No *prox;
+  } No;
+
+  typedef struct {
+      No *topo;
+  } PilhaLista;
+
+  void inicializa_pilha_lista(PilhaLista *p) {
+      p->topo = NULL;
+  }
+
+  void push_lista(PilhaLista *p, int valor) {
+      No *novo = (No*) malloc(sizeof(No));
+      novo->info = valor;
+      // O novo no aponta para o antigo topo
+      novo->prox = p->topo; 
+      // O topo da pilha passa a ser este novo no
+      p->topo = novo;       
+  }
+
+  int pop_lista(PilhaLista *p) {
+      if (p->topo != NULL) {
+          No *aux = p->topo;         // Guarda o no atual do topo
+          int valor = aux->info;     // Salva o valor
+          p->topo = aux->prox;       // O topo passa a ser o elemento de baixo
+          free(aux);                 // Libera a memoria do no removido
+          return valor;
+      }
+      printf("Erro: Pilha vazia\n");
+      return -1;
+  }
+
+---
+
+4. Implementacao de Lista Ligada usando No Cabeca (Head Node / Dummy Node)
+- O Problema: Ao inserir ou remover elementos em uma lista ligada comum, quase sempre precisamos de um "IF" especial para testar se a lista esta vazia (ou seja, se estamos mexendo exatamente no primeiro elemento). Isso deixa o codigo sujo e passivel de erros.
+- A Solucao (No Cabeca): Criamos um No falso/fantasma no inicio da lista que NUNCA guarda informacao util e NUNCA e removido. Ele serve apenas como um ponto de ancoragem. 
+- O Efeito: A lista NUNCA estara vazia (ela sempre tera pelo menos o no cabeca). Isso significa que todo elemento util sempre tera um no "anterior" a ele. Isso elimina a necessidade de fazer IFs especiais para tratar a insercao ou remocao no inicio da estrutura!
+
+- Exemplo Pratico em C:
+  
+  // Criacao da lista COM no cabeca
+  No* cria_lista_com_cabeca() {
+      No *cabeca = (No*) malloc(sizeof(No));
+      cabeca->prox = NULL; // A lista comeca "vazia" logo apos a cabeca
+      return cabeca;
+  }
+
+  // Inserindo no inicio da lista (apos a cabeca)
+  // Veja que nao precisamos testar se a lista esta vazia!
+  void insere_inicio(No *cabeca, int valor) {
+      No *novo = (No*) malloc(sizeof(No));
+      novo->info = valor;
+      
+      novo->prox = cabeca->prox;
+      cabeca->prox = novo;
+  }

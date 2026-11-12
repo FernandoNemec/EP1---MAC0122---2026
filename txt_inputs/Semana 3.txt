@@ -1,0 +1,68 @@
+AULA 06: INTRODUCAO AOS GRAFOS, ARVORES, COMPLEXIDADE E BUSCA
+
+1. Introducao a Teoria dos Grafos
+- Definicao Basica: Um grafo G e definido formalmente como G=(AG,VG), onde VG representa o conjunto de vertices (ou nos) e AG o conjunto de arestas (conexoes entre os vertices).
+- Caminho: Uma sequencia de vertices onde cada par consecutivo e conectado por uma aresta. Formalmente, e a existencia de uma ligacao (u,v) no produto cartesiano VG x VG.
+- Componentes Conexas: Um subgrafo (ou o grafo inteiro) e dito conexo se existe um caminho entre cada par de vertices que pertence a ele. 
+- Grafo Aciclico: E um grafo que nao possui ciclos, ou seja, nao existe nenhum caminho que comeca e termina no mesmo vertice sem repetir arestas.
+- [REFERENCIA EXTERNA: "introducao_grafos.pdf" (Prof. Leonidas de Oliveira Brandao) - Secao 1.1 sobre conceitos basicos e representacoes de grafos].
+
+2. Arvores
+- Conceito: Uma arvore e um caso especial de grafo: um grafo conexo e aciclico com uma relacao de precedencia hierarquica (possuindo raiz, pais e filhos).
+- Exemplo Classico (Arvore de Execucao): O rastro de chamadas de funcoes recursivas, como o calculo de Fatorial e da sequencia de Fibonacci, forma perfeitamente uma estrutura de arvore. A raiz e a chamada inicial, e os filhos sao as sub-chamadas geradas por ela.
+- [REFERENCIA EXTERNA: "introducao_grafos.pdf" (Prof. Leonidas de Oliveira Brandao) - Secao 1.2 sobre Arvores, niveis, folhas e representacoes computacionais].
+
+3. Introducao a Complexidade de Algoritmos e Invariantes
+- Invariantes de Laco: Uma propriedade (ou afirmacao logica) que se mantem verdadeira antes, durante e apos cada iteracao de um algoritmo. E a principal ferramenta para provar a corretude de um algoritmo iterativo atraves da tecnica de inducao matematica.
+- Notacao Assintotica O(.): O "Big-O" e usado para descrever o limite superior do tempo de execução ou do espaco de memoria de um algoritmo em funcao do tamanho da entrada n. Define o comportamento de pior caso.
+- [REFERENCIA EXTERNA: "Algoritmos: Teoria e Pratica" (Cormen et al.), Capitulos 2 e 3 sobre Invariantes e Crescimento de Funcoes].
+
+4. Exemplo de Invariante: Algoritmo de Euclides (MDC)
+- O Problema: Determinar o maior divisor comum entre dois numeros.
+- A Logica (Invariante): A propriedade matematica que fundamenta o algoritmo e que mdc(a,b) e igual a mdc(b, a % b), desde que b seja maior que 0.
+- Implementação Prática em C:
+  
+  int mdc_euclides(int a, int b) {
+      // Caso base: quando b chega a 0, o invariante garante que 'a' e o MDC.
+      if (b == 0) {
+          return a;
+      }
+      // Passo recursivo aplicando a propriedade fundamental
+      return mdc_euclides(b, a % b);
+  }
+
+5. Algoritmos de Busca e suas Complexidades
+- Busca Linear:
+  * Como funciona: Varre o vetor do inicio ao fim ate encontrar o elemento.
+  * Complexidade: O(n) (tempo linear).
+  * Exemplo em C:
+    int busca_linear(int arr[], int n, int x) {
+        for (int i = 0; i < n; i++) {
+            if (arr[i] == x) return i;
+        }
+        return -1; // Nao encontrado
+    }
+
+- Busca com Sentinela:
+  * Como funciona: Uma otimizacao da busca linear. Coloca-se o elemento procurado na ultima posicao do vetor (o "sentinela") para evitar a verificacao de limite de vetor a cada iteracao do laco, ganhando velocidade constante.
+  * Complexidade: O(n) (tempo linear, mas ligeiramente mais rapido na pratica).
+
+- Busca Binaria:
+  * Como funciona: Aplica o paradigma de "Divisao e Conquista" em um vetor OBRIGATORIAMENTE ordenado. Compara o elemento buscado com o valor do meio e descarta metade do vetor a cada passo.
+  * Complexidade: O(log n) (tempo logarítmico, extremamente eficiente).
+  * Exemplo em C:
+    int busca_binaria(int arr[], int esq, int dir, int x) {
+        if (dir >= esq) {
+            int meio = esq + (dir - esq) / 2;
+            
+            // Se o elemento estiver no meio
+            if (arr[meio] == x) return meio;
+            
+            // Se for menor que o meio, busca na metade esquerda
+            if (arr[meio] > x) return busca_binaria(arr, esq, meio - 1, x);
+            
+            // Se for maior, busca na metade direita
+            return busca_binaria(arr, meio + 1, dir, x);
+        }
+        return -1; // Nao encontrado
+    }
