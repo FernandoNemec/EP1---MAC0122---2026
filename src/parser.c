@@ -81,10 +81,10 @@ int isIdentation(char c, int *idx_identation, enum IDENTATION identation[]) {
     identation[(*idx_identation)++] = SPACE;
     return 1;
   case '\n':
-    identation[*(idx_identation)++] = ENTER;
+    identation[(*idx_identation)++] = ENTER;
     return 1;
   case '\t':
-    identation[*(idx_identation)++] = TAB;
+    identation[(*idx_identation)++] = TAB;
     return 1;
   default:
     if (idx_identation == 0)
@@ -99,7 +99,7 @@ void parser(char srcCode[], int *idx, enum COLOR *state,
 int main(int argc, char *argv[]) {
 
   char exemplo[] =
-      "\\\\ Comment\n#include <stdio.h>\n\nint main () {\n\tint exemplo = "
+      "// Comment\n#include <stdio.h>\n\nint main () {\n\tint exemplo = "
       "0;\n\treturn exemplo;\n}";
 
   int idx = 0;
@@ -110,9 +110,13 @@ int main(int argc, char *argv[]) {
   enum COLOR color = NO_COLOR;
   enum IDENTATION identation[100];
 
+  printf("%s\n", exemplo);
   while (idx != end) {
     parser(exemplo, &idx, &color, identation, &idx_identation);
-    printf("idx: %d color: %d\n", idx, color);
+    if (exemplo[idx] == '\n')
+      printf("break idx: %d color: %d, letter: \\n\n", idx, color);
+    else
+      printf("break idx: %d color: %d, letter: %c\n", idx, color, exemplo[idx]);
   }
 
   return 0;
@@ -132,14 +136,19 @@ void parser(char srcCode[], int *idx, enum COLOR *state,
     char c = srcCode[*idx];
     char next_c = srcCode[*idx + 1];
 
+    if (c == '\n')
+      printf("idx: %d color: %d, letter: \\n\n", *idx, *state);
+    else
+      printf("idx: %d color: %d, letter: %c\n", *idx, *state, c);
+
     switch (*state) {
     case NO_COLOR:
 
       // Identation
-      while (isIdentation(c, idx_identation, identation)) {
-        (*idx)++;
-      }
-      beginning = *idx;
+      // while (isIdentation(c, idx_identation, identation)) {
+      //   (*idx)++;
+      // }
+      // beginning = *idx;
 
       // Comments
       if (c == '/' && (next_c == '/' || next_c == '*')) {
@@ -177,10 +186,11 @@ void parser(char srcCode[], int *idx, enum COLOR *state,
         *state = NUMBER;
 
       // DAVO, isso não é desnecessário? Não consegui ver quando entraria
-      // nesse if não... if (*state != NO_COLOR && *idx != beginning) {
-      //   *state = NO_COLOR;
-      //   return;
-      // }
+      // nesse if não...
+      if (*state != NO_COLOR && *idx != beginning) {
+        *state = NO_COLOR;
+        return;
+      }
 
       (*idx)++;
       break;
@@ -190,7 +200,7 @@ void parser(char srcCode[], int *idx, enum COLOR *state,
         *state = NO_COLOR;
         continue;
       }
-      if (commentType == LINE_COMMENT && next_c == '\n') {
+      if (commentType == LINE_COMMENT && c == '\n') {
         (*idx)++;
         return;
       }
@@ -289,10 +299,10 @@ int isDataType(char srcCode[], int *idx) {
   for (int i = 0; i < NUM_DATA_TYPES; i++) {
     char *keyword = KEY_DATAS[i];
     for (int j = 0; j < strlen(keyword); j++) {
-      if (srcCode[*idx + j] != keyword[j])
+      if (srcCode[*idx + 1 + j] != keyword[j])
         break;
-      if (j + 1 == strlen(keyword) && is_delimiter(srcCode[j + 1])) {
-        *idx += j + 1;
+      if (j + 1 == strlen(keyword) && is_delimiter(srcCode[*idx + j + 2])) {
+        *idx += j + 2;
         return 1;
       }
     }
@@ -306,10 +316,10 @@ int isCommand(char srcCode[], int *idx) {
   for (int i = 0; i < NUM_COMMANDS; i++) {
     char *keyword = KEY_COMMANDS[i];
     for (int j = 0; j < strlen(keyword); j++) {
-      if (srcCode[*idx + j] != keyword[j])
+      if (srcCode[*idx + 1 + j] != keyword[j])
         break;
-      if (j + 1 == strlen(keyword) && is_delimiter(srcCode[j + 1])) {
-        *idx += j + 1;
+      if (j + 1 == strlen(keyword) && is_delimiter(srcCode[*idx + j + 2])) {
+        *idx += j + 2;
         return 1;
       }
     }
