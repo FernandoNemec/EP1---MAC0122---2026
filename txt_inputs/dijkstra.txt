@@ -1,0 +1,14 @@
+1. Tecnica: Método guloso
+2. Algoritmo: Dijkstra para caminho mínimo em grafos
+3. Autores: Edsger W. Dijkstra
+4. Data: 1956
+5. Conceitos: Grafos, Caminho mínimo, Fila de prioridade, Algoritmo guloso, Fila de prioridades
+6. Problema: Dado um grafo dirigido com pesos não negativos nas arestas e um vértice de origem, determinar a menor distância e o menor caminho da origem para todos os demais vértices.
+
+O algoritmo de Dijkstra soluciona o problema do caminho mínimo de origem única em um grafo cujos pesos das arestas são não negativos. 
+
+A ideia central do método guloso consiste em manter um conjunto de vértices cujas distâncias mínimas a partir da origem já foram finalizadas. A cada passo, escolhe-se o vértice fora desse conjunto com a menor estimativa de distância, adiciona-se este vértice ao conjunto e atualizam-se as distâncias dos seus vizinhos (operação de relaxamento).
+
+Referências:
+- Cormen, T. H. et al. Algoritmos: Teoria e Prática. Editora Campus, 3ª ed.
+- Feofiloff, P. Algoritmos em Linguagem C. USP.
