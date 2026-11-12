@@ -74,25 +74,7 @@ int is_delimiter(char c) {
 
 int isDataType(char srcCode[], int *idx);
 int isCommand(char srcCode[], int *idx);
-
-int isIdentation(char c, int *idx_identation, enum IDENTATION identation[]) {
-  switch (c) {
-  case ' ':
-    identation[(*idx_identation)++] = SPACE;
-    return 1;
-  case '\n':
-    identation[(*idx_identation)++] = ENTER;
-    return 1;
-  case '\t':
-    identation[(*idx_identation)++] = TAB;
-    return 1;
-  default:
-    if (idx_identation == 0)
-      identation[*(idx_identation)++] = NO_IDENTATION;
-    return 0;
-  }
-}
-
+int isIdentation(char c, int *idx_identation, enum IDENTATION identation[]);
 void parser(char srcCode[], int *idx, enum COLOR *state,
             enum IDENTATION identation[], int *idx_identation);
 
@@ -185,8 +167,6 @@ void parser(char srcCode[], int *idx, enum COLOR *state,
       if (isdigit(c))
         *state = NUMBER;
 
-      // DAVO, isso não é desnecessário? Não consegui ver quando entraria
-      // nesse if não...
       if (*state != NO_COLOR && *idx != beginning) {
         *state = NO_COLOR;
         return;
@@ -325,4 +305,22 @@ int isCommand(char srcCode[], int *idx) {
     }
   }
   return 0;
+}
+
+int isIdentation(char c, int *idx_identation, enum IDENTATION identation[]) {
+  switch (c) {
+  case ' ':
+    identation[(*idx_identation)++] = SPACE;
+    return 1;
+  case '\n':
+    identation[(*idx_identation)++] = ENTER;
+    return 1;
+  case '\t':
+    identation[(*idx_identation)++] = TAB;
+    return 1;
+  default:
+    if (idx_identation == 0)
+      identation[*(idx_identation)++] = NO_IDENTATION;
+    return 0;
+  }
 }
