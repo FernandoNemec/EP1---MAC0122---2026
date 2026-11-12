@@ -98,8 +98,9 @@ void parser(char srcCode[], int *idx, enum COLOR *state,
 
 int main(int argc, char *argv[]) {
 
-  char exemplo[] = "#include <stdio.h>\n\nint main () {\n\tint exemplo = "
-                   "0;\n\treturn exemplo;\n}";
+  char exemplo[] =
+      "\\\\ Comment\n#include <stdio.h>\n\nint main () {\n\tint exemplo = "
+      "0;\n\treturn exemplo;\n}";
 
   int idx = 0;
   int idx_identation;
@@ -206,6 +207,7 @@ void parser(char srcCode[], int *idx, enum COLOR *state,
           return;
         else {
           *state = LIB;
+          (*idx)++;
           break;
         }
       }
