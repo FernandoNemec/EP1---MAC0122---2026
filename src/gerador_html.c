@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <dirent.h>
 
 #define MAX_LINHA 8192
 #define MAX_PAGINAS 1000
@@ -50,13 +53,17 @@ char* obter_campo(int indice_pagina, int tipo_campo) {
  * PARSER DO ARQUIVO TXT
  * ========================================================================== */
 void processar_arquivo_txt(const char *nome_arquivo) {
-    FILE *file = fopen(nome_arquivo, "r");
+
+    char nome_arquivo_txt[512];
+    snprintf(nome_arquivo_txt, sizeof(nome_arquivo_txt), "../txt_inputs/%s.txt", nome_arquivo);
+
+    FILE *file = fopen(nome_arquivo_txt, "r");
     if (!file) return;
 
     PaginaDados p;
     memset(&p, 0, sizeof(PaginaDados));
-    strcpy(p.arquivo_origem, nome_arquivo);
-    snprintf(p.arquivo_destino_html, sizeof(p.arquivo_destino_html), "%s.html", nome_arquivo);
+    strcpy(p.arquivo_origem, nome_arquivo_txt);
+    snprintf(p.arquivo_destino_html, sizeof(p.arquivo_destino_html), "html_outputs/%s.html", nome_arquivo);
 
     char linha[MAX_LINHA];
     while (fgets(linha, MAX_LINHA, file)) {
@@ -96,12 +103,12 @@ void gerar_index_principal() {
     if (!f) return;
     fprintf(f, "<!DOCTYPE html>\n<html lang=\"pt\">\n<head><meta charset=\"UTF-8\"><title>Índice MAC122</title></head>\n<body>\n");
     fprintf(f, "<h1>Índice de Conteúdo MAC122</h1>\n<ul>\n");
-    fprintf(f, "<li><a href=\"idx_tecnica.html\">1. Técnicas</a></li>\n");
-    fprintf(f, "<li><a href=\"idx_algoritmo.html\">2. Algoritmos</a></li>\n");
-    fprintf(f, "<li><a href=\"idx_autores.html\">3. Autores</a></li>\n");
-    fprintf(f, "<li><a href=\"idx_data.html\">4. Datas</a></li>\n");
-    fprintf(f, "<li><a href=\"idx_conceitos.html\">5. Conceitos</a></li>\n");
-    fprintf(f, "<li><a href=\"idx_problema.html\">6. Problemas</a></li>\n");
+    fprintf(f, "<li><a href=\".idx/idx_tecnica.html\">1. Técnicas</a></li>\n");
+    fprintf(f, "<li><a href=\".idx/idx_algoritmo.html\">2. Algoritmos</a></li>\n");
+    fprintf(f, "<li><a href=\".idx/idx_autores.html\">3. Autores</a></li>\n");
+    fprintf(f, "<li><a href=\".idx/idx_data.html\">4. Datas</a></li>\n");
+    fprintf(f, "<li><a href=\".idx/idx_conceitos.html\">5. Conceitos</a></li>\n");
+    fprintf(f, "<li><a href=\".idx/idx_problema.html\">6. Problemas</a></li>\n");
     fprintf(f, "</ul>\n</body>\n</html>\n");
     fclose(f);
 }
@@ -127,7 +134,7 @@ void gerar_pagina_indexadora_com_subpaginas(const char* nome_arquivo, const char
         snprintf(nome_subpagina, sizeof(nome_subpagina), "%s_%d.html", prefixo, contador_categorias);
         
         // Link na página índice principal (ex: Método guloso aponta para a subpágina)
-        fprintf(f, "<li><a href=\"%s\">%s</a></li>\n", nome_subpagina, valor_atual);
+        fprintf(f, "<li><a href=\"../%s\">%s</a></li>\n", nome_subpagina, valor_atual);
         
         // Cria a subpágina para esta categoria específica
         FILE *f_sub = fopen(nome_subpagina, "w");
@@ -142,7 +149,7 @@ void gerar_pagina_indexadora_com_subpaginas(const char* nome_arquivo, const char
                 processados[j] = 1; 
                 char *texto_link = strlen(banco_de_paginas[j].algoritmo) > 0 ? banco_de_paginas[j].algoritmo : banco_de_paginas[j].arquivo_origem;
                 // Link para o detalhe do algoritmo
-                fprintf(f_sub, "<li><a href=\"%s\">%s</a></li>\n", banco_de_paginas[j].arquivo_destino_html, texto_link);
+                fprintf(f_sub, "<li><a href=\"../%s\">%s</a></li>\n", banco_de_paginas[j].arquivo_destino_html, texto_link);
             }
         }
         
@@ -272,6 +279,29 @@ void gerar_pagina_conteudo(PaginaDados *pagina) {
     fclose(txt);
 }
 
+
+/* ==========================================================================
+ * VERIFICAÇÃO DA EXISTÊNCIA DA BUILD
+ * ========================================================================== */
+int pasta_tem_arquivos(const char *caminho) {
+    DIR *dir = opendir(caminho);
+    if (dir == NULL) {
+        return -1; // Retorna -1 se a pasta não existir
+    }
+
+    struct dirent *entrada;
+    while ((entrada = readdir(dir)) != NULL) {
+        // Ignora as entradas padrão "." e ".."
+        if (strcmp(entrada->d_name, ".") != 0 && strcmp(entrada->d_name, "..") != 0) {
+            closedir(dir);
+            return 1; // Encontrou pelo menos 1 arquivo ou subpasta!
+        }
+    }
+
+    closedir(dir);
+    return 0; // Pasta está completamente vazia
+}
+
 /* ==========================================================================
  * FUNÇÃO PRINCIPAL
  * ========================================================================== */
@@ -281,23 +311,46 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    for (int i = 1; i < argc; i++) {
-        processar_arquivo_txt(argv[i]);
+    switch(pasta_tem_arquivos("build")) {
+    case -1:
+        mkdir("build", 0777);
+        chdir("build");
+        break;
+    case 0:
+        chdir("build");
+        break;
+    case 1:
+        perror("Você já usou o gerador_html\nPara mudar os inputs e usá-lo de novo remova a build:\n rm -rf build\n");
+        return 1;
     }
 
-gerar_index_principal();
+    // Gera pastas ocultas para organização do conteúdo compilado
+    mkdir(".idx", 0777);
+    mkdir(".cat", 0777);
+    mkdir("html_outputs", 0777);
+
+    for (int i = 1; i < argc; i++) {
+        int l = strlen(argv[i]);
+        char nome_arquivo[l];
+        snprintf(nome_arquivo, sizeof(nome_arquivo), "%s", argv[i]);
+        l -= 4;
+        nome_arquivo[l] = '\0';
+        processar_arquivo_txt(nome_arquivo);
+    }
+
+    gerar_index_principal();
     
     // Usa a função normal de agrupamento exato
-    gerar_pagina_indexadora_com_subpaginas("idx_tecnica.html", "Índice de Técnicas", 1, "cat_tecnica");
-    gerar_pagina_indexadora_com_subpaginas("idx_algoritmo.html", "Índice de Algoritmos", 2, "cat_algo");
-    gerar_pagina_indexadora_com_subpaginas("idx_autores.html", "Índice de Autores", 3, "cat_autor");
-    gerar_pagina_indexadora_com_subpaginas("idx_data.html", "Índice de Datas", 4, "cat_data");
+    gerar_pagina_indexadora_com_subpaginas(".idx/idx_tecnica.html", "Índice de Técnicas", 1, ".cat/cat_tecnica");
+    gerar_pagina_indexadora_com_subpaginas(".idx/idx_algoritmo.html", "Índice de Algoritmos", 2, ".cat/cat_algo");
+    gerar_pagina_indexadora_com_subpaginas(".idx/idx_autores.html", "Índice de Autores", 3, ".cat/cat_autor");
+    gerar_pagina_indexadora_com_subpaginas(".idx/idx_data.html", "Índice de Datas", 4, ".cat/cat_data");
     
     // *** USA A NOVA FUNÇÃO PARA SEPARAR OS CONCEITOS POR VÍRGULAS ***
-    gerar_pagina_indexadora_conceitos("idx_conceitos.html", "Índice de Conceitos", "cat_conceito");
+    gerar_pagina_indexadora_conceitos(".idx/idx_conceitos.html", "Índice de Conceitos", ".cat/cat_conceito");
     
     // Volta a usar a normal para os problemas
-    gerar_pagina_indexadora_com_subpaginas("idx_problema.html", "Índice de Problemas", 6, "cat_problema");
+    gerar_pagina_indexadora_com_subpaginas(".idx/idx_problema.html", "Índice de Problemas", 6, ".cat/cat_problema");
 
     
     for (int i = 0; i < total_paginas; i++) {
