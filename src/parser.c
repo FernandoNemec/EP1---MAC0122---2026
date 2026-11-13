@@ -319,7 +319,7 @@ int isIdentation(char c, int *idx_identation, enum IDENTATION identation[]) {
     return 1;
   default:
     if (idx_identation == 0)
-      identation[*(idx_identation)++] = NO_IDENTATION;
+      identation[(*idx_identation)++] = NO_IDENTATION;
     return 0;
   }
 }
