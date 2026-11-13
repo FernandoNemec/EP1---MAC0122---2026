@@ -1,15 +1,38 @@
-1. Tecnica: Método guloso
-2. Algoritmo: Dijkstra para caminho mínimo em grafos
+1. Tecnica: método guloso
+2. Algoritmo: Dijkstra (distância mínima)
 3. Autores: Edsger W. Dijkstra
 4. Data: 1956
-5. Conceitos: Grafos, Caminho mínimo, Fila de prioridade, Algoritmo guloso, Fila de prioridades
-6. Problema: Dado um grafo dirigido com pesos não negativos nas arestas e um vértice de origem, determinar a menor distância e o menor caminho da origem para todos os demais vértices.
-7. Semana: 1
+5. Conceitos: Grafos, fila de prioridade, relaxamento, caminhos mínimos
+6. Problema: Dado um grafo com arestas de peso não negativo e um vértice origem, encontrar o caminho de menor custo (distância mínima) deste vértice para todos os outros vértices do grafo.
 
-O algoritmo de Dijkstra soluciona o problema do caminho mínimo de origem única em um grafo cujos pesos das arestas são não negativos. 
+7. Complexidade: O((V + E) log V)
+8. Semana: Semana 10
+9. Código:
+#include <stdio.h>
+#include <limits.h>
+#include <stdbool.h>
+#define V 9
 
-A ideia central do método guloso consiste em manter um conjunto de vértices cujas distâncias mínimas a partir da origem já foram finalizadas. A cada passo, escolhe-se o vértice fora desse conjunto com a menor estimativa de distância, adiciona-se este vértice ao conjunto e atualizam-se as distâncias dos seus vizinhos (operação de relaxamento).
+int minDistance(int dist[], bool sptSet[]) {
+    int min = INT_MAX, min_index;
+    for (int v = 0; v < V; v++)
+        if (sptSet[v] == false && dist[v] <= min)
+            min = dist[v], min_index = v;
+    return min_index;
+}
 
-Referências:
-- Cormen, T. H. et al. Algoritmos: Teoria e Prática. Editora Campus, 3ª ed.
-- Feofiloff, P. Algoritmos em Linguagem C. USP.
+void dijkstra(int graph[V][V], int src) {
+    int dist[V];
+    bool sptSet[V];
+    for (int i = 0; i < V; i++) { dist[i] = INT_MAX; sptSet[i] = false; }
+    dist[src] = 0;
+    
+    for (int count = 0; count < V - 1; count++) {
+        int u = minDistance(dist, sptSet);
+        sptSet[u] = true;
+        for (int v = 0; v < V; v++)
+            if (!sptSet[v] && graph[u][v] && dist[u] != INT_MAX 
+                && dist[u] + graph[u][v] < dist[v])
+                dist[v] = dist[u] + graph[u][v];
+    }
+}

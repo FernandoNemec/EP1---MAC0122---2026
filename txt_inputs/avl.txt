@@ -1,0 +1,27 @@
+1. Tecnica: estrutura de dados balanceada (divisão-e-conquista)
+2. Algoritmo: Inserção em Árvore AVL
+3. Autores: Georgy Adelson-Velsky, Evgenii Landis
+4. Data: 1962
+5. Conceitos: Árvores binárias de busca (ABB), recursividade, balanceamento, rotações
+6. Problema: Dado um cenário que requer buscas e inserções rápidas, manter a altura da árvore binária sempre balanceada para garantir o tempo de execução O(log n).
+
+7. Complexidade: O(log n)
+8. Semana: Semana 09
+9. Código:
+#include <stdio.h>
+#include <stdlib.h>
+struct Node { int key; struct Node *left, *right; int height; };
+int height(struct Node *N) {
+    if (N == NULL) return 0;
+    return N->height;
+}
+int max(int a, int b) { return (a > b) ? a : b; }
+struct Node *rightRotate(struct Node *y) {
+    struct Node *x = y->left;
+    struct Node *T2 = x->right;
+    x->right = y;
+    y->left = T2;
+    y->height = max(height(y->left), height(y->right)) + 1;
+    x->height = max(height(x->left), height(x->right)) + 1;
+    return x;
+}

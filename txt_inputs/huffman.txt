@@ -1,0 +1,25 @@
+1. Tecnica: método guloso
+2. Algoritmo: Codificação de Huffman (compressão de dados)
+3. Autores: David A. Huffman
+4. Data: 1952
+5. Conceitos: Árvores binárias, fila de prioridade, códigos de prefixo
+6. Problema: Dada a frequência de ocorrência de cada caractere em um texto, construir uma árvore binária para atribuir códigos binários mais curtos aos caracteres mais frequentes.
+
+7. Complexidade: O(n log n)
+8. Semana: Semana 09
+9. Código:
+#include <stdio.h>
+#include <stdlib.h>
+struct MinHeapNode {
+    char data;
+    unsigned freq;
+    struct MinHeapNode *left, *right;
+};
+struct MinHeapNode* newNode(char data, unsigned freq) {
+    struct MinHeapNode* temp = (struct MinHeapNode*)malloc(sizeof(struct MinHeapNode));
+    temp->left = temp->right = NULL;
+    temp->data = data;
+    temp->freq = freq;
+    return temp;
+}
+/* Implementacao parcial. Algoritmo constroi a arvore inserindo e removendo da MinHeap */

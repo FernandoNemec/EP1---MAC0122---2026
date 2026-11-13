@@ -1,15 +1,37 @@
-1. Tecnica: Divisão e conquista
-2. Algoritmo: Ordenação por fusão (Merge Sort)
+1. Tecnica: divisão-e-conquista
+2. Algoritmo: Fusão de ordenados (Merge Sort)
 3. Autores: John von Neumann
 4. Data: 1945
-5. Conceitos: Ordenação, Recursividade, Divisão e conquista, Algoritmo estável, Complexidade O(n log n)
-6. Problema: Dada uma sequência de n elementos comparáveis armazenados em um vetor, rearranjá-los em ordem crescente.
-7. Semana: 4
+5. Conceitos: Ordenação, recursividade, intercalação, complexidade O(n log n)
+6. Problema: Ordenar um vetor dividindo-o repetidamente pela metade até obter sublistas de 1 elemento, e então mesclar as sublistas de forma ordenada.
 
-O Merge Sort é um paradigma clássico de divisão e conquista. O algoritmo divide a sequência de entrada em duas metades aproximadamente iguais, ordena recursivamente cada metade e, em seguida, intercala (merge) as duas metades ordenadas para produzir o resultado final.
+7. Complexidade: O(n log n)
+8. Semana: Semana 04
+9. Código:
+#include <stdio.h>
+#include <stdlib.h>
+void merge(int arr[], int l, int m, int r) {
+    int i, j, k;
+    int n1 = m - l + 1;
+    int n2 = r - m;
+    int L[n1], R[n2];
+    for (i = 0; i < n1; i++) L[i] = arr[l + i];
+    for (j = 0; j < n2; j++) R[j] = arr[m + 1 + j];
+    i = 0; j = 0; k = l;
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) { arr[k] = L[i]; i++; } 
+        else { arr[k] = R[j]; j++; }
+        k++;
+    }
+    while (i < n1) { arr[k] = L[i]; i++; k++; }
+    while (j < n2) { arr[k] = R[j]; j++; k++; }
+}
 
-A etapa de intercalação utiliza memória adicional proporcional ao tamanho do vetor, garantindo um tempo de execução de O(n log n) tanto no pior caso quanto no caso médio.
-
-Referências:
-- Knuth, D. E. The Art of Computer Programming, Vol. 3: Sorting and Searching.
-- Sedgewick, R. Algorithms in C. Addison-Wesley.
+void mergeSort(int arr[], int l, int r) {
+    if (l < r) {
+        int m = l + (r - l) / 2;
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+}

@@ -1,0 +1,72 @@
+1. Tecnica: Estrutura de Dados (LIFO - Last In, First Out)
+2. Algoritmo: Pilha (Stack)
+3. Autores: Alan Turing, Friedrich L. Bauer, Klaus Samelson
+4. Data: 1946 (Conceito), 1955 (Formalização)
+5. Conceitos: LIFO, push (inserção no topo), pop (remoção no topo), recursividade, avaliação de expressões
+6. Problema: Gerenciar e processar itens de modo que o último a entrar seja o primeiro a sair, fundamental no gerenciamento de memória (call stack) e de rotinas.
+
+7. Complexidade: O(1) para inserção e remoção
+8. Semana: Semana 08
+9. Código:
+// MAC122 - 2026
+// Prof. Leo^nidas O. Branda~o
+// 
+// Pilha implementada em vetor
+// Testar com calculo de expressao em notacao pos-fixada: EXP EXP op
+// in-fixa         pos-fixa
+// 2 * (3 +  1) => 2  3  1  +  *
+
+#include <stdio.h>
+
+#define MAX 10
+
+// Globais
+int pilha[MAX];
+int topo = -1;
+
+// Auxiliar
+void lista_pilha (void) {
+  int i = 0;
+  printf("topo=%d: ", topo);
+  for (i=0; i<=topo; i++) { printf("%d ", pilha[i]); }
+  printf("\n");
+  }
+
+// Inserir no topo da pilha
+int inserir (int x) {
+  if (topo==MAX-1) { printf("Erro: pilha cheia (%d)\n", MAX); return -1; }
+  pilha[++topo] = x;
+  return topo; // inseriu na posicao topo
+  }
+
+// Remover do topo da pilha
+int remover (void) {
+  if (topo<0) { printf("Erro: pilha vazia\n"); return -2; }
+  return pilha[topo--];
+  }
+
+void teste1 () {
+  int result;
+  result = remover();   printf("[remover] result=%d\n", result); lista_pilha(); // testar pilha vazia
+  result = inserir( 1); printf("[inserir] result=%d\n", result); lista_pilha();
+  result = inserir( 2); printf("[inserir] result=%d\n", result); lista_pilha();
+  result = inserir( 3); printf("[inserir] result=%d\n", result); lista_pilha();
+  result = remover();   printf("[remover] result=%d\n", result); lista_pilha();
+  result = inserir( 4); printf("[inserir] result=%d\n", result); lista_pilha();
+  result = remover();   printf("[remover] result=%d\n", result); lista_pilha();
+  result = inserir( 5); printf("[inserir] result=%d\n", result); lista_pilha();
+  result = inserir( 6); printf("[inserir] result=%d\n", result); lista_pilha();
+  result = inserir( 7); printf("[inserir] result=%d\n", result); lista_pilha();
+  result = inserir( 8); printf("[inserir] result=%d\n", result); lista_pilha();
+  result = inserir( 9); printf("[inserir] result=%d\n", result); lista_pilha();
+  result = inserir(10); printf("[inserir] result=%d\n", result); lista_pilha();
+  result = inserir(11); printf("[inserir] result=%d\n", result); lista_pilha();
+  result = inserir(12); printf("[inserir] result=%d\n", result); lista_pilha();
+  result = inserir(13); printf("[inserir] result=%d\n", result); lista_pilha(); // testar pilha cheia
+  }
+
+int main (void) {
+  printf("Inicio do processamento\n");
+  teste1();
+  return 0; // "a zero value from main() indicates success"
+  }

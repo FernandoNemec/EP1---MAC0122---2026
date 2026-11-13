@@ -18,6 +18,7 @@ typedef struct {
     char data[128];
     char conceitos[1024];
     char problema[4096];
+    char complexidade[128];
     char semana[128];
 } PaginaDados;
 
@@ -48,7 +49,8 @@ char* obter_campo(int indice_pagina, int tipo_campo) {
         case 4: return banco_de_paginas[indice_pagina].data;
         case 5: return banco_de_paginas[indice_pagina].conceitos;
         case 6: return banco_de_paginas[indice_pagina].problema;
-        case 7: return banco_de_paginas[indice_pagina].semana;
+        case 7: return banco_de_paginas[indice_pagina].complexidade;
+        case 8: return banco_de_paginas[indice_pagina].semana;
     }
     return NULL;
 }
@@ -84,6 +86,31 @@ int comparar_strings(const void *a, const void *b) {
     return strcmp((const char *)aux_a, (const char *)aux_b);
 }
 
+// Função para garantir que todo nome de categoria comece com letra maiúscula (padronização)
+void corretor_automatico(char *a) {
+    if (a[0] > 96 && a[0] < 123)
+        a[0] = a[0] - 32;
+    else if (a[0] == -61) {
+        if (a[1] == -95)
+            a[1] = -127;
+        if (a[1] == -109)
+            a[1] = -77;
+    }
+}
+
+// Função para garantir que duas categorias com apenas diferença de caixa sejam
+// lidas como a mesma categoria, por exemplo: Tentativa e erro / Tentativa e Erro
+void caixa_alta(char *a) {
+    for(int i = 0; a[i] != '\0'; i++)
+        if (a[i] > 96 && a[i] < 123)
+            a[i] = a[i] - 32;
+        else if (a[i] == -61) {
+            if (a[++i] == -95)
+                a[++i] = -127;
+            if (a[++i] == -109)
+                a[++i] = -77;
+        }
+}
 
 /* ==========================================================================
  * PARSER DO ARQUIVO TXT
@@ -117,6 +144,8 @@ void processar_arquivo_txt(const char *nome_arquivo) {
             strcpy(p.conceitos, pos + 10);
         } else if ((pos = strstr(linha, "Problema:")) != NULL) {
             strcpy(p.problema, pos + 9);
+        } else if ((pos = strstr(linha, "Complexidade:")) != NULL) {
+            strcpy(p.complexidade, pos + 13);
         } else if ((pos = strstr(linha, "Semana:")) != NULL) {
             strcpy(p.semana, pos + 7);
         }
@@ -128,6 +157,7 @@ void processar_arquivo_txt(const char *nome_arquivo) {
     remover_espacos_extras(p.data);
     remover_espacos_extras(p.conceitos);
     remover_espacos_extras(p.problema);
+    remover_espacos_extras(p.complexidade);
     remover_espacos_extras(p.semana);
 
     banco_de_paginas[total_paginas++] = p;
@@ -171,7 +201,8 @@ void gerar_index_principal() {
     fprintf(f, "<li><a href=\".idx/idx_data.html\">4. Datas</a></li>\n");
     fprintf(f, "<li><a href=\".idx/idx_conceitos.html\">5. Conceitos</a></li>\n");
     fprintf(f, "<li><a href=\".idx/idx_problema.html\">6. Problemas</a></li>\n");
-    fprintf(f, "<li><a href=\".idx/idx_semana.html\">7. Semanas</a></li>\n");
+    fprintf(f, "<li><a href=\".idx/idx_complexidade.html\">7. Complexidade</a></li>\n");
+    fprintf(f, "<li><a href=\".idx/idx_semana.html\">8. Semanas</a></li>\n");
     fprintf(f, "</ul>\n</body>\n</html>\n");
     fclose(f);
 }
@@ -190,10 +221,21 @@ void gerar_pagina_indexadora_com_subpaginas(const char* nome_arquivo, const char
     for (int i = 0; i < total_paginas; i++) {
         char *valor_atual = obter_campo(i, tipo_campo);
         if (valor_atual == NULL || strlen(valor_atual) == 0) continue;
-        
+
+        corretor_automatico(valor_atual);
+
+        char aux1 [256];
+        strcpy(aux1,valor_atual);
+        caixa_alta(aux1);
+
         int existe = 0;
         for (int c = 0; c < total_categorias; c++) {
-            if (strcmp(categorias_unicas[c], valor_atual) == 0) {
+
+            char aux2 [256];
+            strcpy(aux2,categorias_unicas[c]);
+            caixa_alta(aux2);
+
+            if (strcmp(aux2, aux1) == 0) {
                 existe = 1;
                 break;
             }
@@ -241,13 +283,25 @@ void gerar_pagina_indexadora_com_subpaginas(const char* nome_arquivo, const char
             fprintf(f_sub, "<h2>Problema: %s</h2>\n<ul>\n", categorias_unicas[c]);
             break;
         case 7:
+            fprintf(f_sub, "<h1>Complexidade: %s</h1>\n<ul>\n", categorias_unicas[c]);
+            break;
+        case 8:
             fprintf(f_sub, "<h1>Semana: %s</h1>\n<ul>\n", categorias_unicas[c]);
             break;
         }
         
         for (int j = 0; j < total_paginas; j++) {
             char *valor_comparacao = obter_campo(j, tipo_campo);
-            if (valor_comparacao && strcmp(categorias_unicas[c], valor_comparacao) == 0) {
+
+            char aux1 [256];
+            strcpy(aux1,valor_comparacao);
+            caixa_alta(aux1);
+
+            char aux2 [256];
+            strcpy(aux2,categorias_unicas[c]);
+            caixa_alta(aux2);
+
+            if (valor_comparacao && strcmp(aux2, aux1) == 0) {
                 char *texto_link = strlen(banco_de_paginas[j].algoritmo) > 0 ? banco_de_paginas[j].algoritmo : banco_de_paginas[j].arquivo_origem;
                 fprintf(f_sub, "<li><a href=\"../%s\">%s</a></li>\n", banco_de_paginas[j].arquivo_destino_html, texto_link);
             }
@@ -282,12 +336,23 @@ void gerar_pagina_indexadora_conceitos(const char* nome_arquivo, const char* tit
             char conceito_limpo[128];
             strcpy(conceito_limpo, token);
             remover_espacos_extras(conceito_limpo); // Remove espaços antes e depois
-            
+
+            corretor_automatico(conceito_limpo);
+
+            char aux1 [256];
+            strcpy(aux1,conceito_limpo);
+            caixa_alta(aux1);
+
             if (strlen(conceito_limpo) > 0) {
                 int existe = 0;
                 // Verifica se este conceito já foi adicionado à lista de únicos
                 for (int c = 0; c < total_unicos; c++) {
-                    if (strcmp(conceitos_unicos[c], conceito_limpo) == 0) {
+
+                    char aux2 [256];
+                    strcpy(aux2,conceitos_unicos[c]);
+                    caixa_alta(aux2);
+
+                    if (strcmp(aux2, aux1) == 0) {
                         existe = 1;
                         break;
                     }
@@ -328,8 +393,16 @@ void gerar_pagina_indexadora_conceitos(const char* nome_arquivo, const char* tit
                 char conceito_limpo[128];
                 strcpy(conceito_limpo, token);
                 remover_espacos_extras(conceito_limpo);
-                
-                if (strcmp(conceito_limpo, conceitos_unicos[c]) == 0) {
+
+                char aux1 [256];
+                strcpy(aux1,conceito_limpo);
+                caixa_alta(aux1);
+
+                char aux2 [256];
+                strcpy(aux2,conceitos_unicos[c]);
+                caixa_alta(aux2);
+
+                if (strcmp(aux1, aux2) == 0) {
                     possui_conceito = 1; // Encontrou o conceito neste arquivo!
                     break;
                 }
@@ -366,6 +439,7 @@ void gerar_pagina_conteudo(PaginaDados *pagina) {
     if(strlen(pagina->algoritmo) > 0) fprintf(html, "<li><b>Algoritmo:</b> %s</li>", pagina->algoritmo);
     if(strlen(pagina->autores) > 0) fprintf(html, "<li><b>Autores:</b> %s</li>", pagina->autores);
     if(strlen(pagina->data) > 0) fprintf(html, "<li><b>Data:</b> %s</li>", pagina->data);
+    if(strlen(pagina->complexidade) > 0) fprintf(html, "<li><b>Complexidade:</b> %s</li>", pagina->complexidade);
     if(strlen(pagina->semana) > 0) fprintf(html, "<li><b>Semana:</b> %s</li>", pagina->semana);
     fprintf(html, "</ul><hr>\n<p>");
 
@@ -374,7 +448,7 @@ void gerar_pagina_conteudo(PaginaDados *pagina) {
         // Ignora as linhas de cabeçalho na impressão do texto principal
         if (strstr(linha, "Tecnica:") || strstr(linha, "Técnica:") || strstr(linha, "Algoritmo:") ||
             strstr(linha, "Autores:") || strstr(linha, "Data:") || strstr(linha, "Conceitos:") ||
-            strstr(linha, "Problema:") || strstr(linha, "Semana:")) {
+            strstr(linha, "Problema:") || strstr(linha, "Complexidade:") || strstr(linha, "Semana:")) {
             continue;
         }
         fprintf(html, "%s<br>", linha);
@@ -451,7 +525,8 @@ int main(int argc, char *argv[]) {
     gerar_pagina_indexadora_com_subpaginas(".idx/idx_algoritmo.html", "Índice de Algoritmos", 2, ".cat/cat_algo");
     gerar_pagina_indexadora_com_subpaginas(".idx/idx_autores.html", "Índice de Autores", 3, ".cat/cat_autor");
     gerar_pagina_indexadora_com_subpaginas(".idx/idx_data.html", "Índice de Datas", 4, ".cat/cat_data");
-    gerar_pagina_indexadora_com_subpaginas(".idx/idx_semana.html", "Índice de Semanas", 7, ".cat/cat_semana");
+    gerar_pagina_indexadora_com_subpaginas(".idx/idx_complexidade.html", "Índice de Complexidades", 7, ".cat/cat_complexidade");
+    gerar_pagina_indexadora_com_subpaginas(".idx/idx_semana.html", "Índice de Semanas", 8, ".cat/cat_semana");
     
     // *** USA A NOVA FUNÇÃO PARA SEPARAR OS CONCEITOS POR VÍRGULAS ***
     gerar_pagina_indexadora_conceitos(".idx/idx_conceitos.html", "Índice de Conceitos", ".cat/cat_conceito");

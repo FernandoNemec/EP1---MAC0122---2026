@@ -1,15 +1,23 @@
-1. Tecnica: Método guloso
-2. Algoritmo: Ordenação por seleção direta (Selection Sort)
-3. Autores: Desconhecido
-4. Data: 1950
-5. Conceitos: Ordenação, Vetores, Troca direta, Complexidade O(n^2)
-6. Problema: Dada uma sequência de n elementos comparáveis, rearranjá-los de forma que fiquem em ordem não decrescente.
-7. Semana: 5
+1. Tecnica: iterativo (força bruta)
+2. Algoritmo: Seleção Direta (Selection Sort)
+3. Autores: Tradicional / Vários
+4. Data: Anos 1950 (formalização computacional)
+5. Conceitos: Ordenação, vetores, complexidade O(n^2), in-place
+6. Problema: Ordenar um vetor encontrando iterativamente o menor elemento da sublista não ordenada e trocando-o com o primeiro elemento dessa sublista.
 
-A ordenação por seleção direta funciona dividindo o vetor em duas partes: a sublista de itens já ordenados e a sublista de itens restantes. A cada passo, o algoritmo percorre a sublista não ordenada, encontra o menor elemento presente nela e o troca de posição com o primeiro elemento não ordenado.
-
-Embora simples e eficiente para vetores muito pequenos, possui complexidade quadrática O(n^2) em número de comparações, independentemente da ordem inicial dos dados.
-
-Referências:
-- Sedgewick, R. Algorithms in C.
-- Feofiloff, P. Projeto de Algoritmos em C.
+7. Complexidade: O(n^2)
+8. Semana: Semana 04
+9. Código:
+#include <stdio.h>
+void selectionSort(int arr[], int n) {
+    int i, j, min_idx, temp;
+    for (i = 0; i < n-1; i++) {
+        min_idx = i;
+        for (j = i+1; j < n; j++)
+            if (arr[j] < arr[min_idx])
+                min_idx = j;
+        temp = arr[min_idx];
+        arr[min_idx] = arr[i];
+        arr[i] = temp;
+    }
+}

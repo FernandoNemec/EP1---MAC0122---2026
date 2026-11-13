@@ -1,0 +1,18 @@
+1. Tecnica: iterativo (força bruta)
+2. Algoritmo: Busca Sequencial (Busca em vetor não ordenado)
+3. Autores: Tradicional
+4. Data: Desde o início da computação
+5. Conceitos: Vetores, iteração, complexidade O(n)
+6. Problema: Encontrar um elemento específico num vetor não ordenado examinando cada item sequencialmente.
+
+7. Complexidade: O(n)
+8. Semana: Semana 03
+9. Código:
+#include <stdio.h>
+int buscaSequencial(int arr[], int n, int x) {
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == x)
+            return i;
+    }
+    return -1;
+}

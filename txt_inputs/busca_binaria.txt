@@ -1,15 +1,20 @@
-1. Tecnica: Divisão e conquista
-2. Algoritmo: Busca binária em vetor ordenado
-3. Autores: John Mauchly
+1. Tecnica: divisão-e-conquista
+2. Algoritmo: Busca Binária (Busca em vetor ordenado)
+3. Autores: John Mauchly (primeira menção formal)
 4. Data: 1946
-5. Conceitos: Busca, Vetores ordenados, Recursividade, Complexidade O(log n)
-6. Problema: Dado um vetor de elementos ordenados e um valor chave x, determinar o índice da posição de x no vetor ou indicar que o elemento não está presente.
-7. Semana: 1
+5. Conceitos: Vetores ordenados, recursividade ou iteração, complexidade O(log n)
+6. Problema: Encontrar eficientemente um elemento em um vetor previamente ordenado descartando metade do vetor a cada passo.
 
-A busca binária funciona reduzindo pela metade o espaço de busca a cada comparação. Inicialmente, compara-se a chave x com o elemento central do vetor. Se a chave for igual ao elemento central, a busca é concluída. Se for menor, a busca continua recursivamente na metade esquerda; caso contrário, na metade direita.
-
-Devido à divisão sistemática por 2, o número máximo de comparações necessárias para encontrar o elemento em um vetor de tamanho n é O(log n).
-
-Referências:
-- Cormen, T. H. et al. Algoritmos: Teoria e Prática.
-- Ziviani, N. Projeto de Algoritmos com Implementações em Pascal e C.
+7. Complexidade: O(log n)
+8. Semana: Semana 03
+9. Código:
+#include <stdio.h>
+int buscaBinaria(int arr[], int l, int r, int x) {
+    while (l <= r) {
+        int m = l + (r - l) / 2;
+        if (arr[m] == x) return m;
+        if (arr[m] < x) l = m + 1;
+        else r = m - 1;
+    }
+    return -1;
+}
