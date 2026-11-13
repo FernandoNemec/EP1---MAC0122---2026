@@ -18,13 +18,16 @@ typedef struct {
     char data[128];
     char conceitos[1024];
     char problema[4096];
+    char semana[128];
 } PaginaDados;
 
 PaginaDados banco_de_paginas[MAX_PAGINAS];
 int total_paginas = 0;
 
+int todas_paginas_foram_geradas = 1;
+
 /* ==========================================================================
- * FUNÇÕES UTILITÁRIAS
+ * FUNÇÕES UTILITÁRIAS E DE ORDENAÇÃO
  * ========================================================================== */
 void remover_espacos_extras(char *str) {
     if (!str) return;
@@ -45,9 +48,42 @@ char* obter_campo(int indice_pagina, int tipo_campo) {
         case 4: return banco_de_paginas[indice_pagina].data;
         case 5: return banco_de_paginas[indice_pagina].conceitos;
         case 6: return banco_de_paginas[indice_pagina].problema;
+        case 7: return banco_de_paginas[indice_pagina].semana;
     }
     return NULL;
 }
+
+// Função auxiliar para o qsort ordenar arrays de strings alfabeticamente
+int comparar_strings(const void *a, const void *b) {
+
+    char aux_a[512];
+    char aux_b[512];
+
+    strcpy(aux_a, a);
+    strcpy(aux_b, b);
+
+    // Mudança das primeiras letras para melhorar a organização em ordem alfabética
+
+    if ( ((const char *)a)[0] > 96 && ((const char *)a)[0] < 123)           // Minúsculo para maiúsculo 
+        aux_a[0] = ((const char *)a)[0] - 32;
+    else if ( ((const char *)a)[0] == -61) {                                // É acentuado com ´
+        if ( ((const char *)a)[1] == -127 || ((const char *)a)[1] == -95)   // Á ou á
+            aux_a[0] = 'A';
+        if ( ((const char *)a)[1] == -109 || ((const char *)a)[1] == -77)   // Ó ou ó
+            aux_a[0] = 'O';
+    }
+    if ( ((const char *)b)[0] > 96 && ((const char *)b)[0] < 123)           // Minúsculo para maiúsculo 
+        aux_b[0] = ((const char *)b)[0] - 32;
+    else if ( ((const char *)b)[0] == -61) {                                // É acentuado com ´
+        if ( ((const char *)b)[1] == -127 || ((const char *)b)[1] == -95)   // Á ou á
+            aux_b[0] = 'A';
+        if ( ((const char *)b)[1] == -109 || ((const char *)b)[1] == -77)   // Ó ou ó
+            aux_b[0] = 'O';
+    }
+
+    return strcmp((const char *)aux_a, (const char *)aux_b);
+}
+
 
 /* ==========================================================================
  * PARSER DO ARQUIVO TXT
@@ -81,6 +117,8 @@ void processar_arquivo_txt(const char *nome_arquivo) {
             strcpy(p.conceitos, pos + 10);
         } else if ((pos = strstr(linha, "Problema:")) != NULL) {
             strcpy(p.problema, pos + 9);
+        } else if ((pos = strstr(linha, "Semana:")) != NULL) {
+            strcpy(p.semana, pos + 7);
         }
     }
 
@@ -90,6 +128,7 @@ void processar_arquivo_txt(const char *nome_arquivo) {
     remover_espacos_extras(p.data);
     remover_espacos_extras(p.conceitos);
     remover_espacos_extras(p.problema);
+    remover_espacos_extras(p.semana);
 
     banco_de_paginas[total_paginas++] = p;
     fclose(file);
@@ -97,14 +136,14 @@ void processar_arquivo_txt(const char *nome_arquivo) {
 
 
 /* ==========================================================================
- * FUNÇÃO DE CABEÇALHO E CSS (INSERIR ANTES DAS FUNÇÕES DE GERAÇÃO)
+ * FUNÇÃO DE CABEÇALHO E CSS
  * ========================================================================== */
 void imprimir_cabecalho_html(FILE *f, const char *titulo) {
     fprintf(f, "<!DOCTYPE html>\n<html lang=\"pt\">\n<head>\n");
     fprintf(f, "<meta charset=\"UTF-8\">\n<title>%s</title>\n", titulo);
     fprintf(f, "<style>\n");
     fprintf(f, "  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; background-color: #f8f9fa; color: #333; line-height: 1.6; }\n");
-    fprintf(f, "  h1, h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }\n");
+    fprintf(f, "  h1, h2, h3 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }\n");
     fprintf(f, "  ul { list-style-type: square; padding-left: 20px; }\n");
     fprintf(f, "  li { margin-bottom: 10px; }\n");
     fprintf(f, "  a { color: #3498db; text-decoration: none; font-weight: 500; transition: color 0.3s; }\n");
@@ -125,7 +164,6 @@ void gerar_index_principal() {
     // Chama a estilização
     imprimir_cabecalho_html(f, "Índice MAC122");
 
-    fprintf(f, "<!DOCTYPE html>\n<html lang=\"pt\">\n<head><meta charset=\"UTF-8\"><title>Índice MAC122</title></head>\n<body>\n");
     fprintf(f, "<h1>Índice de Conteúdo MAC122</h1>\n<ul>\n");
     fprintf(f, "<li><a href=\".idx/idx_tecnica.html\">1. Técnicas</a></li>\n");
     fprintf(f, "<li><a href=\".idx/idx_algoritmo.html\">2. Algoritmos</a></li>\n");
@@ -133,6 +171,7 @@ void gerar_index_principal() {
     fprintf(f, "<li><a href=\".idx/idx_data.html\">4. Datas</a></li>\n");
     fprintf(f, "<li><a href=\".idx/idx_conceitos.html\">5. Conceitos</a></li>\n");
     fprintf(f, "<li><a href=\".idx/idx_problema.html\">6. Problemas</a></li>\n");
+    fprintf(f, "<li><a href=\".idx/idx_semana.html\">7. Semanas</a></li>\n");
     fprintf(f, "</ul>\n</body>\n</html>\n");
     fclose(f);
 }
@@ -141,48 +180,83 @@ void gerar_pagina_indexadora_com_subpaginas(const char* nome_arquivo, const char
     FILE *f = fopen(nome_arquivo, "w");
     if (!f) return;
 
-    // Chama a estilização
     imprimir_cabecalho_html(f, titulo);
     fprintf(f, "<h1>%s</h1>\n<ul>\n", titulo);
     
-    int processados[MAX_PAGINAS] = {0}; 
-    int contador_categorias = 0;
+    char categorias_unicas[MAX_PAGINAS][256];
+    int total_categorias = 0;
     
+    // Passo 1: Extrair todas as categorias únicas
     for (int i = 0; i < total_paginas; i++) {
-        if (processados[i]) continue; 
-        
         char *valor_atual = obter_campo(i, tipo_campo);
         if (valor_atual == NULL || strlen(valor_atual) == 0) continue;
         
-        contador_categorias++;
+        int existe = 0;
+        for (int c = 0; c < total_categorias; c++) {
+            if (strcmp(categorias_unicas[c], valor_atual) == 0) {
+                existe = 1;
+                break;
+            }
+        }
+        if (!existe) {
+            if (total_categorias < MAX_PAGINAS)
+                strcpy(categorias_unicas[total_categorias++], valor_atual);
+            else {
+                printf("Limite de páginas atingido\n");
+                todas_paginas_foram_geradas = 0;
+            }
+        }
+    }
+    
+    // Passo 2: Ordenar as categorias alfabeticamente usando qsort
+    qsort(categorias_unicas, total_categorias, sizeof(categorias_unicas[0]), comparar_strings);
+    
+    // Passo 3: Gerar as subpáginas baseadas no array ordenado
+    for (int c = 0; c < total_categorias; c++) {
         char nome_subpagina[256];
-        snprintf(nome_subpagina, sizeof(nome_subpagina), "%s_%d.html", prefixo, contador_categorias);
+        snprintf(nome_subpagina, sizeof(nome_subpagina), "%s_%d.html", prefixo, c + 1);
         
-        // Link na página índice principal (ex: Método guloso aponta para a subpágina)
-        fprintf(f, "<li><a href=\"../%s\">%s</a></li>\n", nome_subpagina, valor_atual);
+        fprintf(f, "<li><a href=\"../%s\">%s</a></li>\n", nome_subpagina, categorias_unicas[c]);
         
-        // Cria a subpágina para esta categoria específica
         FILE *f_sub = fopen(nome_subpagina, "w");
-        imprimir_cabecalho_html(f_sub, valor_atual); // Aplica estilo na subpágina
-        fprintf(f_sub, "<h1>Categoria: %s</h1>\n<ul>\n", valor_atual);
+        imprimir_cabecalho_html(f_sub, categorias_unicas[c]); 
+
+        switch(tipo_campo){
+        case 1:
+            fprintf(f_sub, "<h1>Técnica: %s</h1>\n<ul>\n", categorias_unicas[c]);
+            break;
+        case 2:
+            fprintf(f_sub, "<h1>Algoritmo: %s</h1>\n<ul>\n", categorias_unicas[c]);
+            break;
+        case 3:
+            fprintf(f_sub, "<h1>Autor: %s</h1>\n<ul>\n", categorias_unicas[c]);
+            break;
+        case 4:
+            fprintf(f_sub, "<h1>Data: %s</h1>\n<ul>\n", categorias_unicas[c]);
+            break;
+        case 5:
+            fprintf(f_sub, "<h1>Conceito: %s</h1>\n<ul>\n", categorias_unicas[c]);
+            break;
+        case 6:
+            fprintf(f_sub, "<h2>Problema: %s</h2>\n<ul>\n", categorias_unicas[c]);
+            break;
+        case 7:
+            fprintf(f_sub, "<h1>Semana: %s</h1>\n<ul>\n", categorias_unicas[c]);
+            break;
+        }
         
-        // Busca todos os TXTs que pertencem a esta mesma categoria
-        for (int j = i; j < total_paginas; j++) {
+        for (int j = 0; j < total_paginas; j++) {
             char *valor_comparacao = obter_campo(j, tipo_campo);
-            
-            if (valor_comparacao && strcmp(valor_atual, valor_comparacao) == 0) {
-                processados[j] = 1; 
+            if (valor_comparacao && strcmp(categorias_unicas[c], valor_comparacao) == 0) {
                 char *texto_link = strlen(banco_de_paginas[j].algoritmo) > 0 ? banco_de_paginas[j].algoritmo : banco_de_paginas[j].arquivo_origem;
-                // Link para o detalhe do algoritmo
                 fprintf(f_sub, "<li><a href=\"../%s\">%s</a></li>\n", banco_de_paginas[j].arquivo_destino_html, texto_link);
             }
         }
-        
-        fprintf(f_sub, "</ul>\n<br><a href=\"%s\">Voltar para %s</a>\n</body></html>\n", nome_arquivo, titulo);
+        fprintf(f_sub, "</ul>\n<br><a href=\"../%s\">Voltar para %s</a>\n</body></html>\n", nome_arquivo, titulo);
         fclose(f_sub);
     }
     
-    fprintf(f, "</ul>\n<br><a href=\"index.html\">Voltar ao Índice Principal</a>\n</body></html>\n");
+    fprintf(f, "</ul>\n<br><a href=\"../index.html\">Voltar ao Índice Principal</a>\n</body></html>\n");
     fclose(f);
 }
 
@@ -227,13 +301,16 @@ void gerar_pagina_indexadora_conceitos(const char* nome_arquivo, const char* tit
         }
     }
 
-    // Passo 2: Criar uma subpágina para cada conceito único encontrado
+    // Passo 2: Ordenar conceitos alfabeticamente usando qsort
+    qsort(conceitos_unicos, total_unicos, sizeof(conceitos_unicos[0]), comparar_strings);
+
+    // Passo 3: Criar uma subpágina para cada conceito único encontrado
     for (int c = 0; c < total_unicos; c++) {
         char nome_subpagina[256];
         snprintf(nome_subpagina, sizeof(nome_subpagina), "%s_%d.html", prefixo, c + 1);
         
         // Adiciona o link do conceito na página de índice geral (idx_conceitos.html)
-        fprintf(f, "<li><a href=\"%s\">%s</a></li>\n", nome_subpagina, conceitos_unicos[c]);
+        fprintf(f, "<li><a href=\"../%s\">%s</a></li>\n", nome_subpagina, conceitos_unicos[c]);
         
         // Cria a subpágina (ex: cat_conceito_1.html)
         FILE *f_sub = fopen(nome_subpagina, "w");
@@ -262,15 +339,15 @@ void gerar_pagina_indexadora_conceitos(const char* nome_arquivo, const char* tit
             // Se o arquivo contém o conceito, coloca o link do algoritmo nesta subpágina
             if (possui_conceito) {
                 char *texto_link = strlen(banco_de_paginas[i].algoritmo) > 0 ? banco_de_paginas[i].algoritmo : banco_de_paginas[i].arquivo_origem;
-                fprintf(f_sub, "<li><a href=\"%s\">%s</a></li>\n", banco_de_paginas[i].arquivo_destino_html, texto_link);
+                fprintf(f_sub, "<li><a href=\"../%s\">%s</a></li>\n", banco_de_paginas[i].arquivo_destino_html, texto_link);
             }
         }
         
-        fprintf(f_sub, "</ul>\n<br><a href=\"%s\">Voltar para %s</a>\n</body></html>\n", nome_arquivo, titulo);
+        fprintf(f_sub, "</ul>\n<br><a href=\"../%s\">Voltar para %s</a>\n</body></html>\n", nome_arquivo, titulo);
         fclose(f_sub);
     }
 
-    fprintf(f, "</ul>\n<br><a href=\"index.html\">Voltar ao Índice Principal</a>\n</body></html>\n");
+    fprintf(f, "</ul>\n<br><a href=\"../index.html\">Voltar ao Índice Principal</a>\n</body></html>\n");
     fclose(f);
 }
 
@@ -289,18 +366,20 @@ void gerar_pagina_conteudo(PaginaDados *pagina) {
     if(strlen(pagina->algoritmo) > 0) fprintf(html, "<li><b>Algoritmo:</b> %s</li>", pagina->algoritmo);
     if(strlen(pagina->autores) > 0) fprintf(html, "<li><b>Autores:</b> %s</li>", pagina->autores);
     if(strlen(pagina->data) > 0) fprintf(html, "<li><b>Data:</b> %s</li>", pagina->data);
+    if(strlen(pagina->semana) > 0) fprintf(html, "<li><b>Semana:</b> %s</li>", pagina->semana);
     fprintf(html, "</ul><hr>\n<p>");
 
     char linha[MAX_LINHA];
     while (fgets(linha, MAX_LINHA, txt)) {
         // Ignora as linhas de cabeçalho na impressão do texto principal
         if (strstr(linha, "Tecnica:") || strstr(linha, "Técnica:") || strstr(linha, "Algoritmo:") ||
-            strstr(linha, "Autores:") || strstr(linha, "Data:") || strstr(linha, "Conceitos:") || strstr(linha, "Problema:")) {
+            strstr(linha, "Autores:") || strstr(linha, "Data:") || strstr(linha, "Conceitos:") ||
+            strstr(linha, "Problema:") || strstr(linha, "Semana:")) {
             continue;
         }
         fprintf(html, "%s<br>", linha);
     }
-    fprintf(html, "</p>\n<br><a href=\"index.html\">Voltar ao Índice</a>\n</body></html>\n");
+    fprintf(html, "</p>\n<br><a href=\"../index.html\">Voltar ao Índice</a>\n</body></html>\n");
     fclose(html);
     fclose(txt);
 }
@@ -372,6 +451,7 @@ int main(int argc, char *argv[]) {
     gerar_pagina_indexadora_com_subpaginas(".idx/idx_algoritmo.html", "Índice de Algoritmos", 2, ".cat/cat_algo");
     gerar_pagina_indexadora_com_subpaginas(".idx/idx_autores.html", "Índice de Autores", 3, ".cat/cat_autor");
     gerar_pagina_indexadora_com_subpaginas(".idx/idx_data.html", "Índice de Datas", 4, ".cat/cat_data");
+    gerar_pagina_indexadora_com_subpaginas(".idx/idx_semana.html", "Índice de Semanas", 7, ".cat/cat_semana");
     
     // *** USA A NOVA FUNÇÃO PARA SEPARAR OS CONCEITOS POR VÍRGULAS ***
     gerar_pagina_indexadora_conceitos(".idx/idx_conceitos.html", "Índice de Conceitos", ".cat/cat_conceito");
@@ -384,6 +464,9 @@ int main(int argc, char *argv[]) {
         gerar_pagina_conteudo(&banco_de_paginas[i]);
     }
 
-    printf("Páginas HTML geradas com sucesso!\n");
+    if(todas_paginas_foram_geradas)
+        printf("Páginas HTML geradas com sucesso!\n");
+    else
+        printf("Nem todas as páginas foram geradas com sucesso\n");
     return 0;
 }

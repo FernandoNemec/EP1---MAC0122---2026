@@ -4,3 +4,4 @@
 4. Data: 1956
 5. Conceitos: Grafos, Árvores, árvore espalhada mínima, union-find
 6. Problema: Dado um grafo não dirigido com pesos nas arestas, determinar sua árvore espalhada mínima.
+7. Semana: 3

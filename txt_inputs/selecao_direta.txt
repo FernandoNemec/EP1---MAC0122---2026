@@ -4,6 +4,7 @@
 4. Data: 1950
 5. Conceitos: Ordenação, Vetores, Troca direta, Complexidade O(n^2)
 6. Problema: Dada uma sequência de n elementos comparáveis, rearranjá-los de forma que fiquem em ordem não decrescente.
+7. Semana: 5
 
 A ordenação por seleção direta funciona dividindo o vetor em duas partes: a sublista de itens já ordenados e a sublista de itens restantes. A cada passo, o algoritmo percorre a sublista não ordenada, encontra o menor elemento presente nela e o troca de posição com o primeiro elemento não ordenado.
 

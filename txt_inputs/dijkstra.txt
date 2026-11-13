@@ -4,6 +4,7 @@
 4. Data: 1956
 5. Conceitos: Grafos, Caminho mínimo, Fila de prioridade, Algoritmo guloso, Fila de prioridades
 6. Problema: Dado um grafo dirigido com pesos não negativos nas arestas e um vértice de origem, determinar a menor distância e o menor caminho da origem para todos os demais vértices.
+7. Semana: 1
 
 O algoritmo de Dijkstra soluciona o problema do caminho mínimo de origem única em um grafo cujos pesos das arestas são não negativos. 
 

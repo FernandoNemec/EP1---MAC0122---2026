@@ -4,6 +4,7 @@
 4. Data: 1945
 5. Conceitos: Ordenação, Recursividade, Divisão e conquista, Algoritmo estável, Complexidade O(n log n)
 6. Problema: Dada uma sequência de n elementos comparáveis armazenados em um vetor, rearranjá-los em ordem crescente.
+7. Semana: 4
 
 O Merge Sort é um paradigma clássico de divisão e conquista. O algoritmo divide a sequência de entrada em duas metades aproximadamente iguais, ordena recursivamente cada metade e, em seguida, intercala (merge) as duas metades ordenadas para produzir o resultado final.
 

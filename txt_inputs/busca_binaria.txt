@@ -4,6 +4,7 @@
 4. Data: 1946
 5. Conceitos: Busca, Vetores ordenados, Recursividade, Complexidade O(log n)
 6. Problema: Dado um vetor de elementos ordenados e um valor chave x, determinar o índice da posição de x no vetor ou indicar que o elemento não está presente.
+7. Semana: 1
 
 A busca binária funciona reduzindo pela metade o espaço de busca a cada comparação. Inicialmente, compara-se a chave x com o elemento central do vetor. Se a chave for igual ao elemento central, a busca é concluída. Se for menor, a busca continua recursivamente na metade esquerda; caso contrário, na metade direita.
 
