@@ -80,9 +80,9 @@ void parser(char srcCode[], int *idx, enum COLOR *state,
 
 int main(int argc, char *argv[]) {
 
-  char exemplo[] =
-      "// Comment\n#include <stdio.h>\n\nint main () {\n\tint exemplo = "
-      "0;\n\treturn exemplo;\n}";
+  char exemplo[] = "// Hello World\n#include <stdio.h>\nint main () "
+                   "{\n\tprintf(\"Hello World\\n\");"
+                   "\n\treturn 0;\n}";
 
   int idx = 0;
   int idx_identation;
@@ -263,7 +263,6 @@ void parser(char srcCode[], int *idx, enum COLOR *state,
         continue;
       }
       if (!isdigit(c)) {
-        (*idx)++;
         return;
       }
       (*idx)++;
