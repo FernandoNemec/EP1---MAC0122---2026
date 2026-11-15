@@ -5,6 +5,7 @@
 #define BLOCK_COMMENT 2
 #define NUM_DATA_TYPES 10
 #define NUM_COMMANDS 35
+#define NUM_DELIMITERS 11
 
 char KEY_DATAS[][10] = {"bool",  "char",   "int",      "float", "double",
                         "short", "signed", "unsigned", "long",  "void"};
@@ -47,14 +48,7 @@ char KEY_COMMANDS[][15] = {
     "while",
 };
 
-enum IDENTATION {
-  NO_IDENTATION,
-  SPACE,
-  ENTER,
-  TAB,
-  INIT_PARAGRAPH,
-  END_PARAGRAPH
-};
+char DELIMITERS[] = {' ', '\n', '\t', '(', ')', '[', ']', '{', '}', '*', ';'};
 
 enum COLOR {
   NO_COLOR,
@@ -68,47 +62,45 @@ enum COLOR {
   NUMBER
 };
 
-int is_delimiter(char c) {
-  return c == ' ' || c == '(' || c == ')' || c == '*' || c == '\n' || c == '\t';
-}
-
+int isDelimiter(char c);
 int isDataType(char srcCode[], int *idx);
 int isCommand(char srcCode[], int *idx);
-int isIdentation(char c, int *idx_identation, enum IDENTATION identation[]);
-void parser(char srcCode[], int *idx, enum COLOR *state,
-            enum IDENTATION identation[], int *idx_identation);
+void parse_syntax(char srcCode[], int *idx, enum COLOR *state);
+void parse_special_chars(char srcCode[], char f_code[], int *text_size,
+                         int start);
+void print_f_code(char f_code[], int text_size, enum COLOR state);
 
 int main(int argc, char *argv[]) {
 
-  char exemplo[] = "// Hello World\n#include <stdio.h>\nint main () "
-                   "{\n\tprintf(\"Hello World\\n\");"
-                   "\n\treturn 0;\n}";
+  // char text[] = "// Hello World\n#include <stdio.h>\nint main () {\n"
+  //               "\tprintf(\"Hello World\\n\");"
+  //               "\n\treturn 0;\n}";
 
+  char text[1000000];
+  int t = 0;
+  while (scanf("%c", &(text[t++])) != EOF) {
+  }
   int idx = 0;
-  int idx_identation;
-
-  int end = strlen(exemplo);
-
   enum COLOR color = NO_COLOR;
-  enum IDENTATION identation[100];
 
-  printf("%s\n", exemplo);
-  while (idx != end) {
-    parser(exemplo, &idx, &color, identation, &idx_identation);
-    if (exemplo[idx] == '\n')
-      printf("break idx: %d color: %d, letter: \\n\n", idx, color);
-    else
-      printf("break idx: %d color: %d, letter: %c\n", idx, color, exemplo[idx]);
+  while (idx < strlen(text)) {
+    int start = idx;
+    enum COLOR previousColor = color;
+    parse_syntax(text, &idx, &color);
+    int text_size = idx - start;
+    char f_text[1000000];
+    parse_special_chars(text, f_text, &text_size, start);
+    if (previousColor != color)
+      printf("\n");
+    print_f_code(f_text, text_size, color);
   }
 
   return 0;
 }
 
-void parser(char srcCode[], int *idx, enum COLOR *state,
-            enum IDENTATION identation[], int *idx_identation) {
+void parse_syntax(char srcCode[], int *idx, enum COLOR *state) {
 
   int beginning = *idx;
-  *idx_identation = 0;
 
   int commentType;
   char closeString;
@@ -118,19 +110,13 @@ void parser(char srcCode[], int *idx, enum COLOR *state,
     char c = srcCode[*idx];
     char next_c = srcCode[*idx + 1];
 
-    if (c == '\n')
-      printf("idx: %d color: %d, letter: \\n\n", *idx, *state);
-    else
-      printf("idx: %d color: %d, letter: %c\n", *idx, *state, c);
-
     switch (*state) {
     case NO_COLOR:
 
-      // Identation
-      // while (isIdentation(c, idx_identation, identation)) {
-      //   (*idx)++;
-      // }
-      // beginning = *idx;
+      if (isDelimiter(c)) {
+        (*idx)++;
+        return;
+      }
 
       // Comments
       if (c == '/' && (next_c == '/' || next_c == '*')) {
@@ -225,7 +211,7 @@ void parser(char srcCode[], int *idx, enum COLOR *state,
 
     case DATA_TYPE:
       // Atribuir variavel ou type cast
-      if (c == '=' || c == ')') {
+      if (c == '=' || c == ')' || c == '[' || c == ';') {
         *state = NO_COLOR;
         return;
       }
@@ -250,7 +236,8 @@ void parser(char srcCode[], int *idx, enum COLOR *state,
         *state = NO_COLOR;
         continue;
       }
-      if (c != '\\' && next_c == closeString) {
+      if ((srcCode[*idx - 1] == '\\' && c == '\\' && next_c == closeString)
+          || c != '\\' && next_c == closeString) {
         *idx += 2;
         return;
       }
@@ -272,16 +259,102 @@ void parser(char srcCode[], int *idx, enum COLOR *state,
   return;
 }
 
+void parse_special_chars(char srcCode[], char f_code[], int *text_size,
+                         int start) {
+  int f_idx = 0;
+  for (int i = 0; i < *text_size; i++) {
+    char c = srcCode[start + i];
+    switch (c) {
+    case '<':
+      f_code[f_idx++] = '&';
+      f_code[f_idx++] = 'l';
+      f_code[f_idx++] = 't';
+      break;
+    case '>':
+      f_code[f_idx++] = '&';
+      f_code[f_idx++] = 'g';
+      f_code[f_idx++] = 't';
+      break;
+    case '&':
+      f_code[f_idx++] = '&';
+      f_code[f_idx++] = 'a';
+      f_code[f_idx++] = 'm';
+      f_code[f_idx++] = 'p';
+      break;
+    case '\n':
+      f_code[f_idx++] = '<';
+      f_code[f_idx++] = 'b';
+      f_code[f_idx++] = 'r';
+      f_code[f_idx++] = '>';
+      // f_code[f_idx++] = '\n';
+      // f_code[f_idx++] = '\t';
+      break;
+    case '\t':
+      f_code[f_idx++] = '&';
+      f_code[f_idx++] = 'e';
+      f_code[f_idx++] = 'm';
+      f_code[f_idx++] = 's';
+      f_code[f_idx++] = 'p';
+      f_code[f_idx++] = ';';
+      break;
+    case ' ':
+      f_code[f_idx++] = '&';
+      f_code[f_idx++] = 'n';
+      f_code[f_idx++] = 'b';
+      f_code[f_idx++] = 's';
+      f_code[f_idx++] = 'p';
+      f_code[f_idx++] = ';';
+      break;
+    default:
+      f_code[f_idx++] = c;
+      break;
+    }
+  }
+  *text_size = f_idx;
+}
+
+void print_f_code(char f_code[], int text_size, enum COLOR state) {
+  switch (state) {
+  case NO_COLOR:
+    printf("%.*s", text_size, f_code);
+    break;
+  case COMMENT:
+    printf("<span style=\"color: #3D7B7B;\">%.*s</span>", text_size, f_code);
+    break;
+  case PRAGMA:
+    printf("<span style=\"color: #9C6500;\">%.*s</span>", text_size, f_code);
+    break;
+  case LIB:
+    printf("<span style=\"color: #3D7B7B;\">%.*s</span>", text_size, f_code);
+    break;
+  case DATA_TYPE:
+    printf("<span style=\"color: #B00040;\">%.*s</span>", text_size, f_code);
+    break;
+  case COMMAND:
+    printf("<span style=\"color: #008000;\">%.*s</span>", text_size, f_code);
+    break;
+  case FUNCTION:
+    printf("<span style=\"color: #00F;\">%.*s</span>", text_size, f_code);
+    break;
+  case STRING:
+    printf("<span style=\"color: #BA2121;\">%.*s</span>", text_size, f_code);
+    break;
+  case NUMBER:
+    printf("<span style=\"color: #666;\">%.*s</span>", text_size, f_code);
+    break;
+  }
+}
+
 int isDataType(char srcCode[], int *idx) {
-  if (!is_delimiter(srcCode[*idx]))
+  if (*idx > 0 && !isDelimiter(srcCode[*idx - 1]))
     return 0;
   for (int i = 0; i < NUM_DATA_TYPES; i++) {
     char *keyword = KEY_DATAS[i];
     for (int j = 0; j < strlen(keyword); j++) {
-      if (srcCode[*idx + 1 + j] != keyword[j])
+      if (srcCode[*idx + j] != keyword[j])
         break;
-      if (j + 1 == strlen(keyword) && is_delimiter(srcCode[*idx + j + 2])) {
-        *idx += j + 2;
+      if (j == strlen(keyword) - 1 && isDelimiter(srcCode[*idx + j + 1])) {
+        *idx += j + 1;
         return 1;
       }
     }
@@ -290,15 +363,15 @@ int isDataType(char srcCode[], int *idx) {
 }
 
 int isCommand(char srcCode[], int *idx) {
-  if (!is_delimiter(srcCode[*idx]))
+  if (*idx > 0 && !isDelimiter(srcCode[*idx - 1]))
     return 0;
   for (int i = 0; i < NUM_COMMANDS; i++) {
     char *keyword = KEY_COMMANDS[i];
     for (int j = 0; j < strlen(keyword); j++) {
-      if (srcCode[*idx + 1 + j] != keyword[j])
+      if (srcCode[*idx + j] != keyword[j])
         break;
-      if (j + 1 == strlen(keyword) && is_delimiter(srcCode[*idx + j + 2])) {
-        *idx += j + 2;
+      if (j == strlen(keyword) - 1 && isDelimiter(srcCode[*idx + j + 1])) {
+        *idx += j + 1;
         return 1;
       }
     }
@@ -306,20 +379,10 @@ int isCommand(char srcCode[], int *idx) {
   return 0;
 }
 
-int isIdentation(char c, int *idx_identation, enum IDENTATION identation[]) {
-  switch (c) {
-  case ' ':
-    identation[(*idx_identation)++] = SPACE;
-    return 1;
-  case '\n':
-    identation[(*idx_identation)++] = ENTER;
-    return 1;
-  case '\t':
-    identation[(*idx_identation)++] = TAB;
-    return 1;
-  default:
-    if (idx_identation == 0)
-      identation[(*idx_identation)++] = NO_IDENTATION;
-    return 0;
+int isDelimiter(char c) {
+  for (int i = 0; i < NUM_DELIMITERS; i++) {
+    if (c == DELIMITERS[i])
+      return 1;
   }
+  return 0;
 }
