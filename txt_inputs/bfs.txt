@@ -1,0 +1,29 @@
+1. Tecnica: busca cega (pesquisa exaustiva)
+2. Algoritmo: Busca em Largura (BFS - Breadth-First Search)
+3. Autores: Edward F. Moore, C. Y. Lee
+4. Data: 1959
+5. Conceitos: Grafos, Árvores, filas, níveis, distância mais curta não ponderada
+6. Problema: Dado um grafo e um vértice inicial, explorar os vértices vizinhos em camadas (nível a nível) para determinar a menor quantidade de arestas até todos os vértices alcançáveis.
+
+7. Complexidade: O(V + E)
+8. Semana: Semana 10
+9. Código:
+#include <stdio.h>
+#include <stdbool.h>
+#define MAX_VERTICES 100
+void BFS(int graph[MAX_VERTICES][MAX_VERTICES], int start, int V) {
+    bool visited[MAX_VERTICES] = {false};
+    int queue[MAX_VERTICES];
+    int front = 0, rear = 0;
+    visited[start] = true;
+    queue[rear++] = start;
+    while (front < rear) {
+        int current = queue[front++];
+        for (int i = 0; i < V; i++) {
+            if (graph[current][i] == 1 && !visited[i]) {
+                visited[i] = true;
+                queue[rear++] = i;
+            }
+        }
+    }
+}

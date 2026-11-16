@@ -1,0 +1,51 @@
+1. Tecnica: método guloso
+2. Algoritmo: Kruskal (árvore espalhada mínima)
+3. Autores: Joseph Kruskal
+4. Data: 1956
+5. Conceitos: Grafos, Árvores, recursividade, árvore espalhada mínima, Union-Find
+6. Problema: Dado um grafo não direcionado, conexo e com pesos nas arestas, encontrar uma árvore geradora que contenha todos os vértices minimizando o custo total das arestas.
+
+7. Complexidade: O(E log E) ou O(E log V)
+8. Semana: Semana 10
+9. Código:
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Edge { int src, dest, weight; };
+struct Graph { int V, E; struct Edge* edge; };
+struct subset { int parent; int rank; };
+
+int find(struct subset subsets[], int i) {
+    if (subsets[i].parent != i)
+        subsets[i].parent = find(subsets, subsets[i].parent);
+    return subsets[i].parent;
+}
+
+void Union(struct subset subsets[], int x, int y) {
+    int xroot = find(subsets, x);
+    int yroot = find(subsets, y);
+    if (subsets[xroot].rank < subsets[yroot].rank) subsets[xroot].parent = yroot;
+    else if (subsets[xroot].rank > subsets[yroot].rank) subsets[yroot].parent = xroot;
+    else { subsets[yroot].parent = xroot; subsets[xroot].rank++; }
+}
+
+int myComp(const void* a, const void* b) {
+    return ((struct Edge*)a)->weight > ((struct Edge*)b)->weight;
+}
+
+void KruskalMST(struct Graph* graph) {
+    int V = graph->V;
+    struct Edge result[V];
+    int e = 0, i = 0;
+    qsort(graph->edge, graph->E, sizeof(graph->edge[0]), myComp);
+    
+    struct subset* subsets = (struct subset*)malloc(V * sizeof(struct subset));
+    for (int v = 0; v < V; ++v) { subsets[v].parent = v; subsets[v].rank = 0; }
+    while (e < V - 1 && i < graph->E) {
+        struct Edge next_edge = graph->edge[i++];
+        int x = find(subsets, next_edge.src);
+        int y = find(subsets, next_edge.dest);
+        if (x != y) { result[e++] = next_edge; Union(subsets, x, y); }
+    }
+    free(subsets);
+}

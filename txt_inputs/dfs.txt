@@ -1,0 +1,25 @@
+1. Tecnica: busca cega (pesquisa exaustiva) / backtracking
+2. Algoritmo: Busca em Profundidade (DFS - Depth-First Search)
+3. Autores: Charles Pierre Trémaux
+4. Data: Século XIX
+5. Conceitos: Grafos, Árvores, recursividade, pilhas, componentes conexas
+6. Problema: Dado um grafo, explorar cada ramo de um vértice inicial o mais profundamente possível antes de retroceder (backtracking), descobrindo ciclos e a estrutura de conectividade do grafo.
+
+7. Complexidade: O(V + E)
+8. Semana: Semana 10
+9. Código:
+#include <stdio.h>
+#include <stdbool.h>
+#define MAX_VERTICES 100
+void DFS_util(int graph[MAX_VERTICES][MAX_VERTICES], int v, bool visited[], int V) {
+    visited[v] = true;
+    for (int i = 0; i < V; i++) {
+        if (graph[v][i] == 1 && !visited[i]) {
+            DFS_util(graph, i, visited, V);
+        }
+    }
+}
+void DFS(int graph[MAX_VERTICES][MAX_VERTICES], int start, int V) {
+    bool visited[MAX_VERTICES] = {false};
+    DFS_util(graph, start, visited, V);
+}

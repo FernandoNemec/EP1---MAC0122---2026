@@ -1,0 +1,74 @@
+1. Tecnica: Tentativa e Erro (Backtracking)
+2. Algoritmo: Ordenação por Tentativa e Erro
+3. Autores: Conceito Teórico / Didático
+4. Data: N/A
+5. Conceitos: Backtracking, força bruta, recursividade, árvore de permutações, complexidade O(n!)
+6. Problema: Ordenar um vetor gerando sistematicamente permutações (tentativa e erro) até encontrar uma configuração totalmente ordenada.
+
+7. Complexidade: O(n!)
+8. Semana: Semana 04
+9. Código:
+// 2026/08/06
+// Implementacao de ordenador usando tecnica "tentativa-e-erro"
+// Ver: /home/leo/artigos/biblio/ia_generativa/testes_deep_seek/ordena_tentativa_erro/ordena_tentativa_erro_ds.htmlleo@paprika5
+
+#include <stdio.h>
+
+int total = 0; // conta o total de operacoes
+
+// Funcao auxiliar para trocar dois elementos
+void troca (int *a, int *b) {
+  int temp = *a;
+  *a = *b;
+  *b = temp;
+  }
+
+// Funcao principal de ordenacao via "tentativa-e-erro" ("backtracking")
+int ordena_te (int vet[], int n, int k) {
+  // Caso base: se todas as posicoes foram preenchidas, verifica se o vetor esta ordenado
+  if (k == n) { // chegou no ultimo nivel: verifica se ordenado
+    for (int i=1; i<n; i++) {
+      if (vet[i] < vet[i-1])
+        return 0; // Nao ordenado
+      }
+    return 1; // Ordenado com sucesso
+    }
+  // Tentativa: testa cada elemento na posicao k
+  for (int i=k; i<n; i++) {
+    total++; // conta o total de operacoes
+    troca(&vet[k], &vet[i]); // Coloca vet[i] na posicao k
+    if (ordena_te(vet, n, k+1)) // Chama recursivamente para a proxima posicao
+      return 1; // Solucao encontrada
+    troca(&vet[k], &vet[i]); // Nao encontrou solucao, entao desfaz troca ("backtrack")
+    }
+  return 0; // Nenhuma solucao encontrada neste ramo
+  }
+
+void imprime (int v[], int n) {
+  int i;
+  for (i=0; i<n; i++) printf("%d ", v[i]);
+  printf("\n");
+  }
+
+// Exemplo de uso:
+int main () {
+  // int vetor[] = {3, 1, 4, 2  }, n = 4;
+  int vetor[] = {19, 2, 3, 7, 10, 8, 5, 4, 1, 15}, n = 10;
+  // int vetor[] = {19, 2, 3, 7, 20, 10, 8, 5, 4, 1, 17, 15}, n = 12; // essa ja' leva minutos!
+  printf("Vetor original (n=%d) ", n); imprime(vetor,n);
+  if (ordena_te(vetor, n, 0)) {
+    printf("Foi possivel ordenar! Mas custou %d trocas!\n", total);
+  } else {
+    printf("Nao foi possivel ordenar o vetor!!!\n");
+    }
+  printf("Vetor ordenado?: "); imprime(vetor,n);
+  return 0;
+  }
+
+// Testes
+//  n |      total
+//  4 |         32
+// 10 |    7899918
+// 12 |  977141114
+
+ 
