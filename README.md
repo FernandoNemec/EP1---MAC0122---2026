@@ -32,7 +32,7 @@ Este repositório contém a implementação do **EP1 de MAC0122 (Princípios de 
      - Cadeias de Caracteres / Strings (`"texto\n"`)
      - Números (`1234`)
      - Declarações de função (`main`)
-  Padrão Wikipedia: https://en.wikipedia.org/wiki/Syntax_highlighting
+  - Padrão Wikipedia: https://en.wikipedia.org/wiki/Syntax_highlighting
 
 ---
 
@@ -58,13 +58,15 @@ Problema: Dado um grafo não dirigido com pesos nas arestas, determinar sua árv
 
 ```text
 .
-├── src/                    # Código-fonte C do gerador e analisador léxico
-├── txt_inputs/             # Arquivos .txt contendo o material didático (Avaliação 1)
 ├── docs/                   # Documentações exigidas para entrega
 │   ├── contribuicoes.md    # Relatório de contribuição de cada membro
 │   ├── dialogos_ia.md      # Registro das interações com mecanismos de IA
 │   ├── dificuldades_ia.md  # Análise de dificuldades, prós e contras das IAs
 │   └── compilacao.md       # Instruções de compilação
+├── src/                    # Código-fonte C do gerador e analisador léxico
+    ├── html_generator.c    # Código do gerador html
+    └── highlighter.c       # Código do highlighter c
+├── txt_inputs/             # Arquivos .txt contendo o material didático (Avaliação 1)
 └── README.md               # Este arquivo
 ```
 
