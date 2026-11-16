@@ -1,0 +1,145 @@
+1. Tecnica: Estrutura de Dados (FIFO - First In, First Out)
+2. Algoritmo: Fila (Queue)
+3. Autores: Conceito Fundamental
+4. Data: Anos 1950
+5. Conceitos: FIFO, inserção no final, remoção no início, vetor circular, fila dinâmica
+6. Problema: Processar itens na ordem exata em que foram inseridos (o primeiro a entrar é o primeiro a sair), essencial em buffers e sistemas de escalonamento.
+
+7. Complexidade: O(1) para inserção e remoção
+8. Semana: Semana 08
+9. Código:
+// MAC122 - 2026
+// Prof. Leo^nidas O. Branda~o
+// 
+// Fila implementada em vetor
+// Tecnica de "fila circular"
+// 
+//A Atencao: em aula esqueci de dois caso importantes:
+//A 1. Fila sem qualquer elemento, na insercao => caminhar tambem 'ini'
+//A 2. Fila com um so' elemento, na remocao    => caminhar tambem 'fim'
+
+#include <stdio.h>
+
+#define MAX 10
+
+// Globais
+int fila[MAX];
+int ini = -1, fim = -1, tam = 0;
+
+// Auxiliar
+void lista_fila (void) {
+  int i = 0, j = ini;
+  printf("ini=%d, fim=%d: ", ini, fim);
+  for (i=0; i<tam; i++) { printf("%d ", fila[j]); j = (j+1) % MAX; }
+  printf("\n");
+  }
+
+// Inserir no final da fila
+int inserir (int x) {
+  if (tam==MAX) { printf("Erro: fila cheia (%d)\n", MAX); return -1; }
+  if (tam==0) ini = (ini+1)%MAX; //A sem elementos, mover tambem 'ini'
+  fim = (fim+1)%MAX;
+  fila[fim] = x;
+  tam++;
+  return fim;
+  }
+
+// Remover do inicio da fila
+int remover (void) {
+  int aux = fila[ini];
+  if (tam==0) { printf("Erro: fila vazia\n"); return -2; }
+  if (tam==1) fim = (fim+1)%MAX; //A um so' elemento, mover tambem 'fim'
+  ini = (ini+1)%MAX;
+  tam--;
+  return aux;
+  }
+
+// Ilustra remocao em fila vazia e insercao em fila cheia
+void teste1 () {
+  int result; //                                                                     |  0  1  2  3  4  5  6  7  8  9 |
+  result = remover();   printf("[remover] result=%d\n", result); lista_fila(); // .. [ __ __ __ __ __ __ __ __ __ __ ]
+  result = inserir(1);  printf("[inserir] result=%d\n", result); lista_fila(); //    [. 1.__ __ __ __ __ __ __ __ __ ]
+  result = inserir(2);  printf("[inserir] result=%d\n", result); lista_fila(); //    [. 1  2.__ __ __ __ __ __ __ __ ]
+  result = inserir(3);  printf("[inserir] result=%d\n", result); lista_fila(); //    [. 1  2  3.__ __ __ __ __ __ __ ]
+  result = remover();   printf("[remover] result=%d\n", result); lista_fila(); //    [ __. 2  3.__ __ __ __ __ __ __ ]
+  result = inserir(4);  printf("[inserir] result=%d\n", result); lista_fila(); //    [ __. 2  3  4.__ __ __ __ __ __ ]
+  result = inserir(5);  printf("[inserir] result=%d\n", result); lista_fila(); //    [ __. 2  3  4  5.__ __ __ __ __ ]
+  result = inserir(6);  printf("[inserir] result=%d\n", result); lista_fila(); //    [ __. 2  3  4  5  6.__ __ __ __ ]
+  result = inserir(7);  printf("[inserir] result=%d\n", result); lista_fila(); //    [ __. 2  3  4  5  6  7.__ __ __ ]
+  result = inserir(8);  printf("[inserir] result=%d\n", result); lista_fila(); //    [ __. 2  3  4  5  6  7  8.__ __ ]
+  result = inserir(9);  printf("[inserir] result=%d\n", result); lista_fila(); //    [ __. 2  3  4  5  6  7  8  9.__ ]
+  result = inserir(10); printf("[inserir] result=%d\n", result); lista_fila(); //    [ __. 2  3  4  5  6  7  8  9 10.]
+  result = inserir(11); printf("[inserir] result=%d\n", result); lista_fila(); //    [ 11. 2  3  4  5  6  7  8  9 10 ]
+  result = inserir(12); printf("[inserir] result=%d\n", result); lista_fila(); //    [ 11. 2  3  4  5  6  7  8  9 10 ] fila cheia!
+  result = remover();   printf("[remover] result=%d\n", result); lista_fila(); //    [ 11.__. 3  4  5  6  7  8  9 10 ]
+  result = remover();   printf("[remover] result=%d\n", result); lista_fila(); //    [ 11.__ __. 4  5  6  7  8  9 10 ]
+  result = remover();   printf("[remover] result=%d\n", result); lista_fila(); //    [ 11.__ __ __. 5  6  7  8  9 10 ]
+  }
+
+
+// Ilustra mover a fila para direita, ate' "ini" "ciclar" - passar de MAX-1 para 0, depois 1 ate' 3
+void teste2 () {
+  int result; //                                                                   |  0  1  2  3  4  5  6  7  8  9 |
+  result = inserir( 1);  printf("[inserir] result=%d\n", result); lista_fila(); // [. 1.__ __ __ __ __ __ __ __ __ ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __.__.__ __ __ __ __ __ __ __ ] fila vazia
+  result = inserir( 2);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __. 2.__ __ __ __ __ __ __ ]
+  result = inserir( 3);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __. 2  3.__ __ __ __ __ __ ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __ __ __. 3.__ __ __ __ __ __ ]
+  result = inserir( 4);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __ __. 3  4.__ __ __ __ __ ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __ __ __ __. 4 __ __ __ __ __ ]
+  result = inserir( 5);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __ __ __. 4  5.__ __ __ __ ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __ __ __ __ __. 5.__ __ __ __ ]
+  result = inserir( 6);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __ __ __ __. 5  6.__ __ __ ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __ __ __ __ __ __. 6.__ __ __ ]
+  result = inserir( 7);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __ __ __ __ __. 6  7.__ __ ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __ __ __ __ __ __ __. 7.__ __ ]
+  result = inserir( 8);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __ __ __ __ __ __. 7  8.__ ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __ __ __ __ __ __ __ __. 8.__ ]
+  result = inserir( 9);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __ __ __ __ __ __ __. 8  9 ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __ __ __ __ __ __ __ __ __. 9.]
+  result = inserir(10);  printf("[inserir] result=%d\n", result); lista_fila(); // [ 10.__ __ __ __ __ __ __ __. 9 ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [.10.__ __ __ __ __ __ __ __ __ ]
+  result = inserir(11);  printf("[inserir] result=%d\n", result); lista_fila(); // [.10 11.__ __ __ __ __ __ __ __ ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __.11.__ __ __ __ __ __ __ __ ]
+  result = inserir(12);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __.11 12.__ __ __ __ __ __ __ ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __ __.12.__ __ __ __ __ __ __ ]
+  result = inserir(13);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __.12 13.__ __ __ __ __ __ ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __ __ __.13.__ __ __ __ __ __ ]
+  result = inserir(14);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __ __.13 14.__ __ __ __ __ ]
+  result = inserir(15);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __ __.13 14 15.__ __ __ __ ]
+  }
+
+// Ilustra mover a fila para direita, ate' "ini" "ciclar" - passar de MAX-1 para 0, depois 1 ate' 3
+void teste3 () {
+  int result; //                                                                   |  0  1  2  3  4  5  6  7  8  9 |
+  result = inserir( 1);  printf("[inserir] result=%d\n", result); lista_fila(); // [. 1.__ __ __ __ __ __ __ __ __ ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __.__.__ __ __ __ __ __ __ __ ] fila vazia
+  result = inserir( 2);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __. 2.__ __ __ __ __ __ __ ]
+  result = inserir( 3);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __. 2  3.__ __ __ __ __ __ ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __ __ __. 3.__ __ __ __ __ __ ]
+  result = inserir( 4);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __ __. 3  4.__ __ __ __ __ ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __ __ __ __. 4 __ __ __ __ __ ]
+  result = inserir( 5);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __ __ __. 4  5.__ __ __ __ ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __ __ __ __ __. 5.__ __ __ __ ]
+  result = inserir( 6);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __ __ __ __. 5  6.__ __ __ ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __ __ __ __ __ __. 6.__ __ __ ]
+  result = inserir( 7);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __ __ __ __ __. 6  7.__ __ ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __ __ __ __ __ __ __. 7.__ __ ]
+  result = inserir( 8);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __ __ __ __ __ __. 7  8.__ ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __ __ __ __ __ __ __ __. 8.__ ]
+  result = inserir( 9);  printf("[inserir] result=%d\n", result); lista_fila(); // [ __ __ __ __ __ __ __ __. 8  9 ]
+  result = remover();    printf("[remover] result=%d\n", result); lista_fila(); // [ __ __ __ __ __ __ __ __ __. 9.]
+  result = inserir(10);  printf("[inserir] result=%d\n", result); lista_fila(); // [ 10.__  __ __ __ __ __ __ __. 9]
+  result = inserir(11);  printf("[inserir] result=%d\n", result); lista_fila(); // [ 10 11. __ __ __ __ __ __ __. 9]
+  result = inserir(12);  printf("[inserir] result=%d\n", result); lista_fila(); // [ 10 11  12.__ __ __ __ __ __. 9]
+  result = inserir(13);  printf("[inserir] result=%d\n", result); lista_fila(); // [ 10 11  12 13.__ __ __ __ __. 9]
+  }
+
+
+int main (void) {
+  printf("Inicio do processamento\n");
+  teste1();
+  // teste2();
+  // teste3();
+  return 0; // "a zero value from main() indicates success"
+  }

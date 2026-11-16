@@ -1,0 +1,23 @@
+1. Tecnica: iterativo (incremental)
+2. Algoritmo: Inserção Direta (Insertion Sort)
+3. Autores: Tradicional
+4. Data: Anos 1950
+5. Conceitos: Ordenação, iteração, sublista ordenada, estabilidade, complexidade O(n^2)
+6. Problema: Ordenar um vetor construindo a matriz final ordenada um elemento de cada vez, inserindo o elemento na posição correta entre os já ordenados (como organizar cartas na mão).
+
+7. Complexidade: O(n^2)
+8. Semana: Semana 05
+9. Código:
+#include <stdio.h>
+void insertionSort(int arr[], int n) {
+    int i, key, j;
+    for (i = 1; i < n; i++) {
+        key = arr[i];
+        j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = key;
+    }
+}

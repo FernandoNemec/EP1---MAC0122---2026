@@ -1,0 +1,31 @@
+1. Tecnica: tentativa e erro (backtracking)
+2. Algoritmo: Passeio do cavalo (Knight's Tour)
+3. Autores: H. C. von Warnsdorff (Heurística)
+4. Data: 1823
+5. Conceitos: Grafos, tabuleiro, recursividade, backtracking, caminhos Hamiltonianos
+6. Problema: Dado um tabuleiro de xadrez NxN vazio, encontrar uma sequência de movimentos válidos de um cavalo de xadrez que visite todas as casas exatamente uma vez.
+
+7. Complexidade: O(8^(N^2))
+8. Semana: Semana 04
+9. Código:
+#include <stdio.h>
+#define N 8
+int isSafe(int x, int y, int sol[N][N]) {
+    return (x >= 0 && x < N && y >= 0 && y < N && sol[x][y] == -1);
+}
+int solveKTUtil(int x, int y, int movei, int sol[N][N], int xMove[8], int yMove[8]) {
+    int k, next_x, next_y;
+    if (movei == N * N) return 1;
+    for (k = 0; k < 8; k++) {
+        next_x = x + xMove[k];
+        next_y = y + yMove[k];
+        if (isSafe(next_x, next_y, sol)) {
+            sol[next_x][next_y] = movei;
+            if (solveKTUtil(next_x, next_y, movei + 1, sol, xMove, yMove) == 1)
+                return 1;
+            else
+                sol[next_x][next_y] = -1; // backtracking
+        }
+    }
+    return 0;
+}

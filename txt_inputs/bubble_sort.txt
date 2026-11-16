@@ -1,0 +1,23 @@
+1. Tecnica: iterativo (força bruta)
+2. Algoritmo: Método da Bolha (Bubble Sort)
+3. Autores: Tradicional
+4. Data: 1956 (primeira análise)
+5. Conceitos: Ordenação, iteração, trocas adjacentes, estabilidade, complexidade O(n^2)
+6. Problema: Ordenar um vetor comparando repetidamente elementos adjacentes e os trocando se estiverem na ordem errada, até que o maior elemento "flutue" para o final.
+
+7. Complexidade: O(n^2)
+8. Semana: Semana 05
+9. Código:
+#include <stdio.h>
+void bubbleSort(int arr[], int n) {
+    int i, j, temp;
+    for (i = 0; i < n-1; i++) {
+        for (j = 0; j < n-i-1; j++) {
+            if (arr[j] > arr[j+1]) {
+                temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+            }
+        }
+    }
+}

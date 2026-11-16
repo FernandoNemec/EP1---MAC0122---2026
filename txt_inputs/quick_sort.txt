@@ -1,0 +1,31 @@
+1. Tecnica: divisão-e-conquista
+2. Algoritmo: Método Rápido (Quick Sort)
+3. Autores: Tony Hoare
+4. Data: 1959
+5. Conceitos: Ordenação, particionamento, pivô, recursividade, complexidade média O(n log n)
+6. Problema: Ordenar um vetor selecionando um pivô e particionando os outros elementos em dois subarrays, de acordo com o valor comparado ao pivô.
+
+7. Complexidade: O(n log n) médio, O(n^2) pior caso
+8. Semana: Semana 04
+9. Código:
+#include <stdio.h>
+void swap(int* a, int* b) { int t = *a; *a = *b; *b = t; }
+int partition(int arr[], int low, int high) {
+    int pivot = arr[high];
+    int i = (low - 1);
+    for (int j = low; j <= high - 1; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            swap(&arr[i], &arr[j]);
+        }
+    }
+    swap(&arr[i + 1], &arr[high]);
+    return (i + 1);
+}
+void quickSort(int arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}

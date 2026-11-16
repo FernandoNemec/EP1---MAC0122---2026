@@ -1,0 +1,83 @@
+1. Tecnica: Divisão-e-conquista / Iterativo
+2. Algoritmo: Algoritmo de Euclides (Máximo Divisor Comum)
+3. Autores: Euclides de Alexandria
+4. Data: c. 300 a.C.
+5. Conceitos: Recursividade ou laço iterativo, aritmética modular, complexidade logarítmica
+6. Problema: Encontrar o maior número que divide simultaneamente dois números inteiros sem deixar resto.
+
+7. Complexidade: O(log(min(a,b)))
+8. Semana: Semana 03
+9. Código:
+// MAC122 - 206
+// Aula 06
+// Algoritmo de Euclides para Maximo Divisor Comum (MDC)
+
+// https://en.wikipedia.org/wiki/Euclidean_algorithm
+// "The Euclidean algorithm is one of the oldest algorithms in common use [24].
+//  It appears in Euclid's Elements (c. 300 BC), specifically in Book 7 (Propositions 1–2) and Book 10 (Propositions 2–3)"
+
+// Teorema: m e n naturais, entao MDC(m,n) = { m%n==0, n; m%n!=0, MDC(n, m%n) }
+// Prova:   Supor m>=n
+//          Sejam (q,r)       tq  m = q*n+r <=> r = m-qn (1)
+//          Pegando o MDC de n e m%n: k
+//          Sejam (k, q1, q2) tq  k = mdc(n, m%n) = med(n,r),
+//                                n = q1 k  (2)
+//                                r = q2 k  (3)
+//          Usando (3) e (1),     q2 k = r = m - qn <=> m = q2 k + qn
+//          Usando (2) na ultima, m = q2 k + qn = q2 k + q q1 k = (q2 + q q1) k, e (q2 + q q1) e' natural,
+//          logo k tambem e' divisor de m.
+//          Assim, k e'divisor de n, de m%n (r) e tambem de m.
+//          Falta provar que k e' o menor. Fazer por contradicao.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define DEPURACAO 1
+
+// Algoritmo eficiente para MDC (relatado por Euclides ha' mais de 2.300 anos)
+int mdc (int m, int n) {
+  int aux, conta=0;
+  if (DEPURACAO) printf("[I] mdc(%4d, %4d)\n", m, n);
+  while (n != 0) {
+    if (DEPURACAO) printf(" [I] (%4d, %4d)\n", m, n);
+    aux = n;
+    n = m % n;
+    m = aux;
+    if (conta++ == 10) break;
+    }
+  return m;
+  }
+
+// Versao recursiva - Algoritmo eficiente para MDC (relatado por Euclides ha' mais de 2.300 anos)
+int mdc_rec (int m, int n) {
+  int aux, conta=0;
+  if (DEPURACAO) printf("[R] mdc(%4d, %4d)\n", m, n);
+  if (n == 0) return m;
+  return mdc_rec(n, m%n);
+  }
+
+// Principal
+int main (int argc, char *argv[]) {
+  int m,n;
+  if (argc < 3) {
+    printf("Uso: %s m n\n.\n   m e n sao inteiros nao-negativos.\n", argv[0]);
+    return -1;
+    } 
+
+  m = atol(argv[1]); // interprete argumento 1 como inteiro
+  n = atol(argv[2]); // idem para arg. 2 (se nao inteiro => erro)
+
+  if (n < 0 || m < 0) {
+    printf("%s: argumentos devem ser inteiros nao-negativos.\n", argv[0]);
+    return -2;
+    }
+  if (n == 0 && m == 0) {
+    printf("%s: ambos argumentos nao podem ser nulos.\n", argv[0]);
+    return -3;
+    }
+ 
+  printf("mdc(%d,%d) = %d.\n", m, n, mdc(m,n));
+  printf("mdc(%d,%d) = %d.\n", m, n, mdc_rec(m,n));
+  return 0; // sem erros...
+  }
+
