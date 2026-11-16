@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Algoritmo de Euclides (Máximo Divisor Comum)</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; background-color: #f8f9fa; color: #333; line-height: 1.6; }
+  h1, h2, h3 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+  ul { list-style-type: square; padding-left: 20px; }
+  li { margin-bottom: 10px; }
+  a { color: #3498db; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+  a:hover { color: #e74c3c; text-decoration: underline; }
+  hr { border: 0; height: 1px; background: #ddd; margin: 20px 0; }
+</style>
+</head>
+<body>
+<h2>Detalhes:</h2><ul><li><b>Técnica:</b> Divisão e Conquista (Iterativo)</li><li><b>Algoritmo:</b> Algoritmo de Euclides (Máximo Divisor Comum)</li><li><b>Autores:</b> Euclides de Alexandria</li><li><b>Data:</b> C. 300 a.C.</li><li><b>Complexidade:</b> O(log(min(a,b)))</li><li><b>Semana:</b> Semana 03</li></ul><hr>
+<p>
+<br><span style="color: #3D7B7B;">//&nbsp;MAC122&nbsp;-&nbsp;206<br>
+	</span><span style="color: #3D7B7B;">//&nbsp;Aula&nbsp;06<br>
+	</span><span style="color: #3D7B7B;">//&nbsp;Algoritmo&nbsp;de&nbsp;Euclides&nbsp;para&nbsp;Maximo&nbsp;Divisor&nbsp;Comum&nbsp;(MDC)<br>
+	</span><br>
+	<span style="color: #3D7B7B;">//&nbsp;https://en.wikipedia.org/wiki/Euclidean_algorithm<br>
+	</span><span style="color: #3D7B7B;">//&nbsp;"The&nbsp;Euclidean&nbsp;algorithm&nbsp;is&nbsp;one&nbsp;of&nbsp;the&nbsp;oldest&nbsp;algorithms&nbsp;in&nbsp;common&nbsp;use&nbsp;[24].<br>
+	</span><span style="color: #3D7B7B;">//&nbsp;&nbsp;It&nbsp;appears&nbsp;in&nbsp;Euclid's&nbsp;Elements&nbsp;(c.&nbsp;300&nbsp;BC),&nbsp;specifically&nbsp;in&nbsp;Book&nbsp;7&nbsp;(Propositions&nbsp;1–2)&nbsp;and&nbsp;Book&nbsp;10&nbsp;(Propositions&nbsp;2–3)"<br>
+	</span><br>
+	<span style="color: #3D7B7B;">//&nbsp;Teorema:&nbsp;m&nbsp;e&nbsp;n&nbsp;naturais,&nbsp;entao&nbsp;MDC(m,n)&nbsp;=&nbsp;{&nbsp;m%n==0,&nbsp;n;&nbsp;m%n!=0,&nbsp;MDC(n,&nbsp;m%n)&nbsp;}<br>
+	</span><span style="color: #3D7B7B;">//&nbsp;Prova:&nbsp;&nbsp;&nbsp;Supor&nbsp;m&gt=n<br>
+	</span><span style="color: #3D7B7B;">//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sejam&nbsp;(q,r)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tq&nbsp;&nbsp;m&nbsp;=&nbsp;q*n+r&nbsp;&lt=&gt&nbsp;r&nbsp;=&nbsp;m-qn&nbsp;(1)<br>
+	</span><span style="color: #3D7B7B;">//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pegando&nbsp;o&nbsp;MDC&nbsp;de&nbsp;n&nbsp;e&nbsp;m%n:&nbsp;k<br>
+	</span><span style="color: #3D7B7B;">//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sejam&nbsp;(k,&nbsp;q1,&nbsp;q2)&nbsp;tq&nbsp;&nbsp;k&nbsp;=&nbsp;mdc(n,&nbsp;m%n)&nbsp;=&nbsp;med(n,r),<br>
+	</span><span style="color: #3D7B7B;">//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;=&nbsp;q1&nbsp;k&nbsp;&nbsp;(2)<br>
+	</span><span style="color: #3D7B7B;">//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r&nbsp;=&nbsp;q2&nbsp;k&nbsp;&nbsp;(3)<br>
+	</span><span style="color: #3D7B7B;">//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Usando&nbsp;(3)&nbsp;e&nbsp;(1),&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;q2&nbsp;k&nbsp;=&nbsp;r&nbsp;=&nbsp;m&nbsp;-&nbsp;qn&nbsp;&lt=&gt&nbsp;m&nbsp;=&nbsp;q2&nbsp;k&nbsp;+&nbsp;qn<br>
+	</span><span style="color: #3D7B7B;">//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Usando&nbsp;(2)&nbsp;na&nbsp;ultima,&nbsp;m&nbsp;=&nbsp;q2&nbsp;k&nbsp;+&nbsp;qn&nbsp;=&nbsp;q2&nbsp;k&nbsp;+&nbsp;q&nbsp;q1&nbsp;k&nbsp;=&nbsp;(q2&nbsp;+&nbsp;q&nbsp;q1)&nbsp;k,&nbsp;e&nbsp;(q2&nbsp;+&nbsp;q&nbsp;q1)&nbsp;e'&nbsp;natural,<br>
+	</span><span style="color: #3D7B7B;">//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;logo&nbsp;k&nbsp;tambem&nbsp;e'&nbsp;divisor&nbsp;de&nbsp;m.<br>
+	</span><span style="color: #3D7B7B;">//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Assim,&nbsp;k&nbsp;e'divisor&nbsp;de&nbsp;n,&nbsp;de&nbsp;m%n&nbsp;(r)&nbsp;e&nbsp;tambem&nbsp;de&nbsp;m.<br>
+	</span><span style="color: #3D7B7B;">//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Falta&nbsp;provar&nbsp;que&nbsp;k&nbsp;e'&nbsp;o&nbsp;menor.&nbsp;Fazer&nbsp;por&nbsp;contradicao.<br>
+	</span><br>
+	<span style="color: #9C6500;">#include&nbsp;</span><span style="color: #3D7B7B;">&ltstdio.h&gt</span><br>
+	<span style="color: #9C6500;">#include&nbsp;</span><span style="color: #3D7B7B;">&ltstdlib.h&gt</span><br>
+	<br>
+	<span style="color: #9C6500;">#define&nbsp;DEPURACAO&nbsp;</span><span style="color: #666;">1</span><br>
+	<br>
+	<span style="color: #3D7B7B;">//&nbsp;Algoritmo&nbsp;eficiente&nbsp;para&nbsp;MDC&nbsp;(relatado&nbsp;por&nbsp;Euclides&nbsp;ha'&nbsp;mais&nbsp;de&nbsp;2.300&nbsp;anos)<br>
+	</span><span style="color: #B00040;">int</span><span style="color: #00F;">&nbsp;mdc&nbsp;</span>(<span style="color: #B00040;">int</span>&nbsp;m,&nbsp;int&nbsp;n)&nbsp;{<br>
+	&nbsp;&nbsp;<span style="color: #B00040;">int</span>&nbsp;aux,&nbsp;conta=<span style="color: #666;">0</span>;<br>
+	&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(DEPURACAO)&nbsp;printf(<span style="color: #BA2121;">"[I]&nbsp;mdc(%4d,&nbsp;%4d)\n"</span>,&nbsp;m,&nbsp;n);<br>
+	&nbsp;&nbsp;<span style="color: #008000;">while</span>&nbsp;(n&nbsp;!=&nbsp;<span style="color: #666;">0</span>)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(DEPURACAO)&nbsp;printf(<span style="color: #BA2121;">"&nbsp;[I]&nbsp;(%4d,&nbsp;%4d)\n"</span>,&nbsp;m,&nbsp;n);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;aux&nbsp;=&nbsp;n;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;=&nbsp;m&nbsp;%&nbsp;n;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;m&nbsp;=&nbsp;aux;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(conta++&nbsp;==&nbsp;<span style="color: #666;">10</span>)&nbsp;<span style="color: #008000;">break</span>;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+	&nbsp;&nbsp;<span style="color: #008000;">return</span>&nbsp;m;<br>
+	&nbsp;&nbsp;}<br>
+	<br>
+	<span style="color: #3D7B7B;">//&nbsp;Versao&nbsp;recursiva&nbsp;-&nbsp;Algoritmo&nbsp;eficiente&nbsp;para&nbsp;MDC&nbsp;(relatado&nbsp;por&nbsp;Euclides&nbsp;ha'&nbsp;mais&nbsp;de&nbsp;2.300&nbsp;anos)<br>
+	</span><span style="color: #B00040;">int</span><span style="color: #00F;">&nbsp;mdc_rec&nbsp;</span>(<span style="color: #B00040;">int</span>&nbsp;m,&nbsp;int&nbsp;n)&nbsp;{<br>
+	&nbsp;&nbsp;<span style="color: #B00040;">int</span>&nbsp;aux,&nbsp;conta=<span style="color: #666;">0</span>;<br>
+	&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(DEPURACAO)&nbsp;printf(<span style="color: #BA2121;">"[R]&nbsp;mdc(%4d,&nbsp;%4d)\n"</span>,&nbsp;m,&nbsp;n);<br>
+	&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(n&nbsp;==&nbsp;<span style="color: #666;">0</span>)&nbsp;<span style="color: #008000;">return</span>&nbsp;m;<br>
+	&nbsp;&nbsp;<span style="color: #008000;">return</span>&nbsp;mdc_rec(n,&nbsp;m%n);<br>
+	&nbsp;&nbsp;}<br>
+	<br>
+	<span style="color: #3D7B7B;">//&nbsp;Principal<br>
+	</span><span style="color: #B00040;">int</span><span style="color: #00F;">&nbsp;main&nbsp;</span>(<span style="color: #B00040;">int</span>&nbsp;argc,&nbsp;char&nbsp;*argv[])&nbsp;{<br>
+	&nbsp;&nbsp;<span style="color: #B00040;">int</span>&nbsp;m,n;<br>
+	&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(argc&nbsp;&lt&nbsp;<span style="color: #666;">3</span>)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;printf(<span style="color: #BA2121;">"Uso:&nbsp;%s&nbsp;m&nbsp;n\n.\n&nbsp;&nbsp;&nbsp;m&nbsp;e&nbsp;n&nbsp;sao&nbsp;inteiros&nbsp;nao-negativos.\n"</span>,&nbsp;argv[<span style="color: #666;">0</span>]);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">return</span>&nbsp;-<span style="color: #666;">1</span>;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;<br>
+	<br>
+	&nbsp;&nbsp;m&nbsp;=&nbsp;atol(argv[<span style="color: #666;">1</span>]);&nbsp;<span style="color: #3D7B7B;">//&nbsp;interprete&nbsp;argumento&nbsp;1&nbsp;como&nbsp;inteiro<br>
+	</span>&nbsp;&nbsp;n&nbsp;=&nbsp;atol(argv[<span style="color: #666;">2</span>]);&nbsp;<span style="color: #3D7B7B;">//&nbsp;idem&nbsp;para&nbsp;arg.&nbsp;2&nbsp;(se&nbsp;nao&nbsp;inteiro&nbsp;=&gt&nbsp;erro)<br>
+	</span><br>
+	&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(n&nbsp;&lt&nbsp;<span style="color: #666;">0</span>&nbsp;||&nbsp;m&nbsp;&lt&nbsp;<span style="color: #666;">0</span>)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;printf(<span style="color: #BA2121;">"%s:&nbsp;argumentos&nbsp;devem&nbsp;ser&nbsp;inteiros&nbsp;nao-negativos.\n"</span>,&nbsp;argv[<span style="color: #666;">0</span>]);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">return</span>&nbsp;-<span style="color: #666;">2</span>;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+	&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(n&nbsp;==&nbsp;<span style="color: #666;">0</span>&nbsp;&amp&amp&nbsp;m&nbsp;==&nbsp;<span style="color: #666;">0</span>)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;printf(<span style="color: #BA2121;">"%s:&nbsp;ambos&nbsp;argumentos&nbsp;nao&nbsp;podem&nbsp;ser&nbsp;nulos.\n"</span>,&nbsp;argv[<span style="color: #666;">0</span>]);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">return</span>&nbsp;-<span style="color: #666;">3</span>;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+	&nbsp;<br>
+	&nbsp;&nbsp;printf(<span style="color: #BA2121;">"mdc(%d,%d)&nbsp;=&nbsp;%d.\n"</span>,&nbsp;m,&nbsp;n,&nbsp;mdc(m,n));<br>
+	&nbsp;&nbsp;printf(<span style="color: #BA2121;">"mdc(%d,%d)&nbsp;=&nbsp;%d.\n"</span>,&nbsp;m,&nbsp;n,&nbsp;mdc_rec(m,n));<br>
+	&nbsp;&nbsp;<span style="color: #008000;">return</span>&nbsp;<span style="color: #666;">0</span>;&nbsp;<span style="color: #3D7B7B;">//&nbsp;sem&nbsp;erros...<br>
+	</span>&nbsp;&nbsp;}<br>
+	<br>
+	</p>
+<br><a href="../index.html">Voltar ao Índice</a>
+</body></html>

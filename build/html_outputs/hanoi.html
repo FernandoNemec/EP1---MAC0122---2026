@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Torre de Hanói</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; background-color: #f8f9fa; color: #333; line-height: 1.6; }
+  h1, h2, h3 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+  ul { list-style-type: square; padding-left: 20px; }
+  li { margin-bottom: 10px; }
+  a { color: #3498db; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+  a:hover { color: #e74c3c; text-decoration: underline; }
+  hr { border: 0; height: 1px; background: #ddd; margin: 20px 0; }
+</style>
+</head>
+<body>
+<h2>Detalhes:</h2><ul><li><b>Técnica:</b> Divisão e Conquista (Recursividade)</li><li><b>Algoritmo:</b> Torre de Hanói</li><li><b>Autores:</b> Édouard Lucas</li><li><b>Data:</b> 1883</li><li><b>Complexidade:</b> O(2^n)</li><li><b>Semana:</b> Semana 02</li></ul><hr>
+<p>
+<br>
+<br><span style="color: #3D7B7B;">//&nbsp;Aula&nbsp;04&nbsp;(2026/08/05)<br>
+	</span><br>
+	<span style="color: #3D7B7B;">//&nbsp;Complexidade&nbsp;de&nbsp;algoritmo<br>
+	</span><span style="color: #3D7B7B;">//&nbsp;Modelo:&nbsp;divisao&nbsp;e&nbsp;conquista<br>
+	</span><span style="color: #3D7B7B;">//&nbsp;Movimentar&nbsp;de&nbsp;modo&nbsp;otimo&nbsp;n&nbsp;discos&nbsp;de&nbsp;A&nbsp;para&nbsp;C<br>
+	</span><br>
+	<span style="color: #9C6500;">#include&nbsp;</span><span style="color: #3D7B7B;">&ltstdio.h&gt</span><br>
+	<span style="color: #9C6500;">#include&nbsp;</span><span style="color: #3D7B7B;">&lttime.h&gt</span>&nbsp;<span style="color: #3D7B7B;">//&nbsp;clock_t,&nbsp;clock()<br>
+	</span><br>
+	<span style="color: #9C6500;">#define&nbsp;DEPURACAO&nbsp;</span><span style="color: #666;">0</span><br>
+	<br>
+	<span style="color: #B00040;">int</span>&nbsp;totalm;&nbsp;<span style="color: #3D7B7B;">//&nbsp;global&nbsp;para&nbsp;contar&nbsp;movimentos<br>
+	</span><br>
+	<span style="color: #B00040;">int</span><span style="color: #00F;">&nbsp;mover_disco&nbsp;</span>(<span style="color: #B00040;">int</span>&nbsp;n,&nbsp;int&nbsp;origem,&nbsp;int&nbsp;destino)&nbsp;{<br>
+	&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(DEPURACAO)&nbsp;printf(<span style="color: #BA2121;">"%d&nbsp;(%5d):&nbsp;%d&nbsp;-&gt&nbsp;%d\n"</span>,&nbsp;n,&nbsp;totalm,&nbsp;origem,&nbsp;destino);&nbsp;<span style="color: #3D7B7B;">//D<br>
+	</span>&nbsp;&nbsp;totalm++;<br>
+	&nbsp;&nbsp;}<br>
+	<br>
+	<span style="color: #3D7B7B;">//&nbsp;Mover&nbsp;n&nbsp;discos&nbsp;de&nbsp;A&nbsp;(origem)&nbsp;para&nbsp;C&nbsp;(destino),&nbsp;usando&nbsp;B&nbsp;como&nbsp;auxiliar<br>
+	</span><span style="color: #B00040;">int</span><span style="color: #00F;">&nbsp;hanoi&nbsp;</span>(<span style="color: #B00040;">int</span>&nbsp;n,&nbsp;int&nbsp;A,&nbsp;int&nbsp;C,&nbsp;int&nbsp;B)&nbsp;{<br>
+	&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(n==<span style="color: #666;">1</span>)&nbsp;mover_disco(<span style="color: #666;">1</span>,&nbsp;A,&nbsp;C);<br>
+	&nbsp;&nbsp;<span style="color: #008000;">else</span>&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;hanoi(n-<span style="color: #666;">1</span>,&nbsp;A,&nbsp;B,&nbsp;C);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;mover_disco(n,&nbsp;A,&nbsp;C);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;hanoi(n-<span style="color: #666;">1</span>,&nbsp;B,&nbsp;C,&nbsp;A);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+	&nbsp;&nbsp;}<br>
+	<br>
+	<span style="color: #B00040;">int</span><span style="color: #00F;">&nbsp;main&nbsp;</span>(<span style="color: #B00040;">void</span>)&nbsp;{<br>
+	&nbsp;&nbsp;<span style="color: #B00040;">int</span>&nbsp;i,&nbsp;tempoh;<br>
+	&nbsp;&nbsp;clock_t&nbsp;tempo_inicial,&nbsp;tempo_final;<br>
+	&nbsp;&nbsp;<span style="color: #B00040;">double</span>&nbsp;t_rec;<br>
+	&nbsp;&nbsp;printf(<span style="color: #BA2121;">"&nbsp;&nbsp;n&nbsp;|&nbsp;Hanoi(n)&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;Tempo&nbsp;\n"</span>);<br>
+	&nbsp;&nbsp;<span style="color: #008000;">for</span>&nbsp;(i=<span style="color: #666;">1</span>;&nbsp;i&lt<span style="color: #666;">20</span>;&nbsp;i++)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(DEPURACAO)&nbsp;printf(<span style="color: #BA2121;">"-------------\n"</span>);&nbsp;<span style="color: #3D7B7B;">//D<br>
+	</span>&nbsp;&nbsp;&nbsp;&nbsp;totalm&nbsp;=&nbsp;<span style="color: #666;">0</span>;&nbsp;<span style="color: #3D7B7B;">//&nbsp;global&nbsp;para&nbsp;contar&nbsp;movimentos<br>
+	</span>&nbsp;&nbsp;&nbsp;&nbsp;tempo_inicial&nbsp;=&nbsp;clock();&nbsp;<span style="color: #3D7B7B;">//&nbsp;"dispara&nbsp;o&nbsp;cronometro"...<br>
+	</span>&nbsp;&nbsp;&nbsp;&nbsp;hanoi(i,&nbsp;<span style="color: #666;">1</span>,&nbsp;<span style="color: #666;">3</span>,&nbsp;<span style="color: #666;">2</span>);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;tempo_final&nbsp;=&nbsp;clock();<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;t_rec&nbsp;=&nbsp;(<span style="color: #B00040;">double</span>)(tempo_final&nbsp;-&nbsp;tempo_inicial)&nbsp;/&nbsp;CLOCKS_PER_SEC;&nbsp;<span style="color: #3D7B7B;">//&nbsp;tempo_final-tempo_inicial<br>
+	</span>&nbsp;&nbsp;&nbsp;&nbsp;printf(<span style="color: #BA2121;">"&nbsp;%2d&nbsp;|&nbsp;%11d&nbsp;|&nbsp;%13.8f&nbsp;\n"</span>,&nbsp;i,&nbsp;totalm,&nbsp;t_rec);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+	&nbsp;&nbsp;<span style="color: #008000;">return</span>&nbsp;<span style="color: #666;">0</span>;&nbsp;<span style="color: #3D7B7B;">//&nbsp;A&nbsp;zero&nbsp;value&nbsp;from&nbsp;main()&nbsp;indicates&nbsp;success&nbsp;&nbsp;&nbsp;<br>
+	</span>&nbsp;&nbsp;}<br>
+	<br>
+	<span style="color: #3D7B7B;">/*<br>
+	*/</span><br>
+	</p>
+<br><a href="../index.html">Voltar ao Índice</a>
+</body></html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Passeio do cavalo (Knight's Tour)</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; background-color: #f8f9fa; color: #333; line-height: 1.6; }
+  h1, h2, h3 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+  ul { list-style-type: square; padding-left: 20px; }
+  li { margin-bottom: 10px; }
+  a { color: #3498db; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+  a:hover { color: #e74c3c; text-decoration: underline; }
+  hr { border: 0; height: 1px; background: #ddd; margin: 20px 0; }
+</style>
+</head>
+<body>
+<h2>Detalhes:</h2><ul><li><b>Técnica:</b> Tentativa e Erro (Backtracking)</li><li><b>Algoritmo:</b> Passeio do cavalo (Knight's Tour)</li><li><b>Autores:</b> H. C. von Warnsdorff (Heurística)</li><li><b>Data:</b> 1823</li><li><b>Complexidade:</b> O(8^(N^2))</li><li><b>Semana:</b> Semana 04</li></ul><hr>
+<p>
+<br><span style="color: #9C6500;">#include&nbsp;</span><span style="color: #3D7B7B;">&ltstdio.h&gt</span><br>
+	<span style="color: #9C6500;">#define&nbsp;N&nbsp;</span><span style="color: #666;">8</span><br>
+	<span style="color: #B00040;">int</span><span style="color: #00F;">&nbsp;isSafe</span>(<span style="color: #B00040;">int</span>&nbsp;x,&nbsp;int&nbsp;y,&nbsp;int&nbsp;sol[N][N])&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">return</span>&nbsp;(x&nbsp;&gt=&nbsp;<span style="color: #666;">0</span>&nbsp;&amp&amp&nbsp;x&nbsp;&lt&nbsp;N&nbsp;&amp&amp&nbsp;y&nbsp;&gt=&nbsp;<span style="color: #666;">0</span>&nbsp;&amp&amp&nbsp;y&nbsp;&lt&nbsp;N&nbsp;&amp&amp&nbsp;sol[x][y]&nbsp;==&nbsp;-<span style="color: #666;">1</span>);<br>
+	}<br>
+	<span style="color: #B00040;">int</span><span style="color: #00F;">&nbsp;solveKTUtil</span>(<span style="color: #B00040;">int</span>&nbsp;x,&nbsp;int&nbsp;y,&nbsp;int&nbsp;movei,&nbsp;int&nbsp;sol[N][N],&nbsp;<span style="color: #B00040;">int</span>&nbsp;xMove[<span style="color: #666;">8</span>],&nbsp;<span style="color: #B00040;">int</span>&nbsp;yMove[<span style="color: #666;">8</span>])&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #B00040;">int</span>&nbsp;k,&nbsp;next_x,&nbsp;next_y;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(movei&nbsp;==&nbsp;N&nbsp;*&nbsp;N)&nbsp;<span style="color: #008000;">return</span>&nbsp;<span style="color: #666;">1</span>;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">for</span>&nbsp;(k&nbsp;=&nbsp;<span style="color: #666;">0</span>;&nbsp;k&nbsp;&lt&nbsp;<span style="color: #666;">8</span>;&nbsp;k++)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;next_x&nbsp;=&nbsp;x&nbsp;+&nbsp;xMove[k];<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;next_y&nbsp;=&nbsp;y&nbsp;+&nbsp;yMove[k];<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(isSafe(next_x,&nbsp;next_y,&nbsp;sol))&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sol[next_x][next_y]&nbsp;=&nbsp;movei;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(solveKTUtil(next_x,&nbsp;next_y,&nbsp;movei&nbsp;+&nbsp;<span style="color: #666;">1</span>,&nbsp;sol,&nbsp;xMove,&nbsp;yMove)&nbsp;==&nbsp;<span style="color: #666;">1</span>)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">return</span>&nbsp;<span style="color: #666;">1</span>;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">else</span><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sol[next_x][next_y]&nbsp;=&nbsp;-<span style="color: #666;">1</span>;&nbsp;<span style="color: #3D7B7B;">//&nbsp;backtracking<br>
+	</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">return</span>&nbsp;<span style="color: #666;">0</span>;<br>
+	}<br>
+	</p>
+<br><a href="../index.html">Voltar ao Índice</a>
+</body></html>

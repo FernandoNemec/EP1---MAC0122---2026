@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Propriedade de Monte (Heap Sort)</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; background-color: #f8f9fa; color: #333; line-height: 1.6; }
+  h1, h2, h3 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+  ul { list-style-type: square; padding-left: 20px; }
+  li { margin-bottom: 10px; }
+  a { color: #3498db; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+  a:hover { color: #e74c3c; text-decoration: underline; }
+  hr { border: 0; height: 1px; background: #ddd; margin: 20px 0; }
+</style>
+</head>
+<body>
+<h2>Detalhes:</h2><ul><li><b>Técnica:</b> Estrutura de Dados Auxiliar (Otimização)</li><li><b>Algoritmo:</b> Propriedade de Monte (Heap Sort)</li><li><b>Autores:</b> J. W. J. Williams</li><li><b>Data:</b> 1964</li><li><b>Complexidade:</b> O(n log n)</li><li><b>Semana:</b> Semana 04</li></ul><hr>
+<p>
+<br><span style="color: #9C6500;">#include&nbsp;</span><span style="color: #3D7B7B;">&ltstdio.h&gt</span><br>
+	<span style="color: #B00040;">void</span><span style="color: #00F;">&nbsp;swap</span>(<span style="color: #B00040;">int</span>&nbsp;*a,&nbsp;int&nbsp;*b)&nbsp;{&nbsp;<span style="color: #B00040;">int</span>&nbsp;temp&nbsp;=&nbsp;*a;&nbsp;*a&nbsp;=&nbsp;*b;&nbsp;*b&nbsp;=&nbsp;temp;&nbsp;}<br>
+	<span style="color: #B00040;">void</span><span style="color: #00F;">&nbsp;heapify</span>(<span style="color: #B00040;">int</span>&nbsp;arr[],&nbsp;<span style="color: #B00040;">int</span>&nbsp;n,&nbsp;int&nbsp;i)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #B00040;">int</span>&nbsp;largest&nbsp;=&nbsp;i;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #B00040;">int</span>&nbsp;left&nbsp;=&nbsp;<span style="color: #666;">2</span>&nbsp;*&nbsp;i&nbsp;+&nbsp;<span style="color: #666;">1</span>;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #B00040;">int</span>&nbsp;right&nbsp;=&nbsp;<span style="color: #666;">2</span>&nbsp;*&nbsp;i&nbsp;+&nbsp;<span style="color: #666;">2</span>;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(left&nbsp;&lt&nbsp;n&nbsp;&amp&amp&nbsp;arr[left]&nbsp;&gt&nbsp;arr[largest])&nbsp;largest&nbsp;=&nbsp;left;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(right&nbsp;&lt&nbsp;n&nbsp;&amp&amp&nbsp;arr[right]&nbsp;&gt&nbsp;arr[largest])&nbsp;largest&nbsp;=&nbsp;right;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(largest&nbsp;!=&nbsp;i)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;swap(&amparr[i],&nbsp;&amparr[largest]);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;heapify(arr,&nbsp;n,&nbsp;largest);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+	}<br>
+	<span style="color: #B00040;">void</span><span style="color: #00F;">&nbsp;heapSort</span>(<span style="color: #B00040;">int</span>&nbsp;arr[],&nbsp;<span style="color: #B00040;">int</span>&nbsp;n)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">for</span>&nbsp;(<span style="color: #B00040;">int</span>&nbsp;i&nbsp;=&nbsp;n&nbsp;/&nbsp;<span style="color: #666;">2</span>&nbsp;-&nbsp;<span style="color: #666;">1</span>;&nbsp;i&nbsp;&gt=&nbsp;<span style="color: #666;">0</span>;&nbsp;i--)&nbsp;heapify(arr,&nbsp;n,&nbsp;i);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">for</span>&nbsp;(<span style="color: #B00040;">int</span>&nbsp;i&nbsp;=&nbsp;n&nbsp;-&nbsp;<span style="color: #666;">1</span>;&nbsp;i&nbsp;&gt=&nbsp;<span style="color: #666;">0</span>;&nbsp;i--)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;swap(&amparr[<span style="color: #666;">0</span>],&nbsp;&amparr[i]);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;heapify(arr,&nbsp;i,&nbsp;<span style="color: #666;">0</span>);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+	}<br>
+	</p>
+<br><a href="../index.html">Voltar ao Índice</a>
+</body></html>

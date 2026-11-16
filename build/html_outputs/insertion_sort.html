@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Inserção Direta (Insertion Sort)</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; background-color: #f8f9fa; color: #333; line-height: 1.6; }
+  h1, h2, h3 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+  ul { list-style-type: square; padding-left: 20px; }
+  li { margin-bottom: 10px; }
+  a { color: #3498db; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+  a:hover { color: #e74c3c; text-decoration: underline; }
+  hr { border: 0; height: 1px; background: #ddd; margin: 20px 0; }
+</style>
+</head>
+<body>
+<h2>Detalhes:</h2><ul><li><b>Técnica:</b> Iterativo (Incremental)</li><li><b>Algoritmo:</b> Inserção Direta (Insertion Sort)</li><li><b>Autores:</b> Tradicional</li><li><b>Data:</b> Anos 1950</li><li><b>Complexidade:</b> O(n^2)</li><li><b>Semana:</b> Semana 05</li></ul><hr>
+<p>
+<br><span style="color: #9C6500;">#include&nbsp;</span><span style="color: #3D7B7B;">&ltstdio.h&gt</span><br>
+	<span style="color: #B00040;">void</span><span style="color: #00F;">&nbsp;insertionSort</span>(<span style="color: #B00040;">int</span>&nbsp;arr[],&nbsp;<span style="color: #B00040;">int</span>&nbsp;n)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #B00040;">int</span>&nbsp;i,&nbsp;key,&nbsp;j;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">for</span>&nbsp;(i&nbsp;=&nbsp;<span style="color: #666;">1</span>;&nbsp;i&nbsp;&lt&nbsp;n;&nbsp;i++)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;key&nbsp;=&nbsp;arr[i];<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j&nbsp;=&nbsp;i&nbsp;-&nbsp;<span style="color: #666;">1</span>;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">while</span>&nbsp;(j&nbsp;&gt=&nbsp;<span style="color: #666;">0</span>&nbsp;&amp&amp&nbsp;arr[j]&nbsp;&gt&nbsp;key)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arr[j&nbsp;+&nbsp;<span style="color: #666;">1</span>]&nbsp;=&nbsp;arr[j];<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j&nbsp;=&nbsp;j&nbsp;-&nbsp;<span style="color: #666;">1</span>;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arr[j&nbsp;+&nbsp;<span style="color: #666;">1</span>]&nbsp;=&nbsp;key;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+	}<br>
+	</p>
+<br><a href="../index.html">Voltar ao Índice</a>
+</body></html>

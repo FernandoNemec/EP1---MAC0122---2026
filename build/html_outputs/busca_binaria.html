@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Busca Binária (Busca em vetor ordenado)</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; background-color: #f8f9fa; color: #333; line-height: 1.6; }
+  h1, h2, h3 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+  ul { list-style-type: square; padding-left: 20px; }
+  li { margin-bottom: 10px; }
+  a { color: #3498db; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+  a:hover { color: #e74c3c; text-decoration: underline; }
+  hr { border: 0; height: 1px; background: #ddd; margin: 20px 0; }
+</style>
+</head>
+<body>
+<h2>Detalhes:</h2><ul><li><b>Técnica:</b> Divisão e Conquista</li><li><b>Algoritmo:</b> Busca Binária (Busca em vetor ordenado)</li><li><b>Autores:</b> John Mauchly (primeira menção formal)</li><li><b>Data:</b> 1946</li><li><b>Complexidade:</b> O(log n)</li><li><b>Semana:</b> Semana 03</li></ul><hr>
+<p>
+<br><span style="color: #9C6500;">#include&nbsp;</span><span style="color: #3D7B7B;">&ltstdio.h&gt</span><br>
+	<span style="color: #B00040;">int</span><span style="color: #00F;">&nbsp;buscaBinaria</span>(<span style="color: #B00040;">int</span>&nbsp;arr[],&nbsp;<span style="color: #B00040;">int</span>&nbsp;l,&nbsp;int&nbsp;r,&nbsp;int&nbsp;x)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">while</span>&nbsp;(l&nbsp;&lt=&nbsp;r)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #B00040;">int</span>&nbsp;m&nbsp;=&nbsp;l&nbsp;+&nbsp;(r&nbsp;-&nbsp;l)&nbsp;/&nbsp;<span style="color: #666;">2</span>;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(arr[m]&nbsp;==&nbsp;x)&nbsp;<span style="color: #008000;">return</span>&nbsp;m;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(arr[m]&nbsp;&lt&nbsp;x)&nbsp;l&nbsp;=&nbsp;m&nbsp;+&nbsp;<span style="color: #666;">1</span>;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">else</span>&nbsp;r&nbsp;=&nbsp;m&nbsp;-&nbsp;<span style="color: #666;">1</span>;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">return</span>&nbsp;-<span style="color: #666;">1</span>;<br>
+	}<br>
+	</p>
+<br><a href="../index.html">Voltar ao Índice</a>
+</body></html>

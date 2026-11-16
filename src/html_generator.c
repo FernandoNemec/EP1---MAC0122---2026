@@ -535,7 +535,7 @@ void gerar_pagina_conteudo(PaginaDados *pagina) {
         strstr(linha, "Algoritmo:") || strstr(linha, "Autores:") ||
         strstr(linha, "Data:") || strstr(linha, "Conceitos:") ||
         strstr(linha, "Problema:") || strstr(linha, "Complexidade:") ||
-        strstr(linha, "Semana:")) {
+        strstr(linha, "Semana:") || strstr(linha, "Código:")){
       continue;
     }
 

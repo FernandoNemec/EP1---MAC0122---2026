@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Fusão de ordenados (Merge Sort)</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; background-color: #f8f9fa; color: #333; line-height: 1.6; }
+  h1, h2, h3 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+  ul { list-style-type: square; padding-left: 20px; }
+  li { margin-bottom: 10px; }
+  a { color: #3498db; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+  a:hover { color: #e74c3c; text-decoration: underline; }
+  hr { border: 0; height: 1px; background: #ddd; margin: 20px 0; }
+</style>
+</head>
+<body>
+<h2>Detalhes:</h2><ul><li><b>Técnica:</b> Divisão e Conquista</li><li><b>Algoritmo:</b> Fusão de ordenados (Merge Sort)</li><li><b>Autores:</b> John von Neumann</li><li><b>Data:</b> 1945</li><li><b>Complexidade:</b> O(n log n)</li><li><b>Semana:</b> Semana 04</li></ul><hr>
+<p>
+<br><span style="color: #9C6500;">#include&nbsp;</span><span style="color: #3D7B7B;">&ltstdio.h&gt</span><br>
+	<span style="color: #9C6500;">#include&nbsp;</span><span style="color: #3D7B7B;">&ltstdlib.h&gt</span><br>
+	<span style="color: #B00040;">void</span><span style="color: #00F;">&nbsp;merge</span>(<span style="color: #B00040;">int</span>&nbsp;arr[],&nbsp;<span style="color: #B00040;">int</span>&nbsp;l,&nbsp;int&nbsp;m,&nbsp;int&nbsp;r)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #B00040;">int</span>&nbsp;i,&nbsp;j,&nbsp;k;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #B00040;">int</span>&nbsp;n1&nbsp;=&nbsp;m&nbsp;-&nbsp;l&nbsp;+&nbsp;<span style="color: #666;">1</span>;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #B00040;">int</span>&nbsp;n2&nbsp;=&nbsp;r&nbsp;-&nbsp;m;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #B00040;">int</span>&nbsp;L[n<span style="color: #666;">1</span>],&nbsp;R[n<span style="color: #666;">2</span>];<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">for</span>&nbsp;(i&nbsp;=&nbsp;<span style="color: #666;">0</span>;&nbsp;i&nbsp;&lt&nbsp;n<span style="color: #666;">1</span>;&nbsp;i++)&nbsp;L[i]&nbsp;=&nbsp;arr[l&nbsp;+&nbsp;i];<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">for</span>&nbsp;(j&nbsp;=&nbsp;<span style="color: #666;">0</span>;&nbsp;j&nbsp;&lt&nbsp;n<span style="color: #666;">2</span>;&nbsp;j++)&nbsp;R[j]&nbsp;=&nbsp;arr[m&nbsp;+&nbsp;<span style="color: #666;">1</span>&nbsp;+&nbsp;j];<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;i&nbsp;=&nbsp;<span style="color: #666;">0</span>;&nbsp;j&nbsp;=&nbsp;<span style="color: #666;">0</span>;&nbsp;k&nbsp;=&nbsp;l;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">while</span>&nbsp;(i&nbsp;&lt&nbsp;n<span style="color: #666;">1</span>&nbsp;&amp&amp&nbsp;j&nbsp;&lt&nbsp;n<span style="color: #666;">2</span>)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(L[i]&nbsp;&lt=&nbsp;R[j])&nbsp;{&nbsp;arr[k]&nbsp;=&nbsp;L[i];&nbsp;i++;&nbsp;}&nbsp;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">else</span>&nbsp;{&nbsp;arr[k]&nbsp;=&nbsp;R[j];&nbsp;j++;&nbsp;}<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;k++;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">while</span>&nbsp;(i&nbsp;&lt&nbsp;n<span style="color: #666;">1</span>)&nbsp;{&nbsp;arr[k]&nbsp;=&nbsp;L[i];&nbsp;i++;&nbsp;k++;&nbsp;}<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">while</span>&nbsp;(j&nbsp;&lt&nbsp;n<span style="color: #666;">2</span>)&nbsp;{&nbsp;arr[k]&nbsp;=&nbsp;R[j];&nbsp;j++;&nbsp;k++;&nbsp;}<br>
+	}<br>
+	<br>
+	<span style="color: #B00040;">void</span><span style="color: #00F;">&nbsp;mergeSort</span>(<span style="color: #B00040;">int</span>&nbsp;arr[],&nbsp;<span style="color: #B00040;">int</span>&nbsp;l,&nbsp;int&nbsp;r)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000;">if</span>&nbsp;(l&nbsp;&lt&nbsp;r)&nbsp;{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #B00040;">int</span>&nbsp;m&nbsp;=&nbsp;l&nbsp;+&nbsp;(r&nbsp;-&nbsp;l)&nbsp;/&nbsp;<span style="color: #666;">2</span>;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mergeSort(arr,&nbsp;l,&nbsp;m);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mergeSort(arr,&nbsp;m&nbsp;+&nbsp;<span style="color: #666;">1</span>,&nbsp;r);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;merge(arr,&nbsp;l,&nbsp;m,&nbsp;r);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+	}<br>
+	</p>
+<br><a href="../index.html">Voltar ao Índice</a>
+</body></html>
