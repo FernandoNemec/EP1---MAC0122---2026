@@ -153,9 +153,10 @@ void processar_arquivo_txt(const char *nome_arquivo) {
   while (fgets(linha, MAX_LINHA, file)) {
     char *pos;
     // Procura pelos marcadores flexíveis
-    if ((pos = strstr(linha, "Tecnica:")) != NULL ||
-        (pos = strstr(linha, "Técnica:")) != NULL) {
+    if ((pos = strstr(linha, "Tecnica:")) != NULL) {
       strcpy(p.tecnica, pos + 8);
+    } else if ((pos = strstr(linha, "Técnica:")) != NULL) {
+      strcpy(p.tecnica, pos + 9);
     } else if ((pos = strstr(linha, "Algoritmo:")) != NULL) {
       strcpy(p.algoritmo, pos + 10);
     } else if ((pos = strstr(linha, "Autores:")) != NULL) {
