@@ -1,0 +1,25 @@
+APRESENTAÇÃO: PROBLEMA, MODELAGEM E EFICIÊNCIA
+
+1. Motivação e Perguntas Iniciais
+- Alguém tem alguma ideia de como ferramentas como o Waze funcionam?
+- Alguém tem alguma ideia de como ferramentas de reconhecimento facial funcionam?
+- Como obter um mapa processável (como no caso do Waze) a partir dos dados de taxistas?
+- Exemplos de imagens simples.
+
+2. Objetivos e Fundamentos
+- Resolver problemas.
+- Resolver eficientemente (isso significa não apenas resolver, mas ser rápido e economizar memória).
+- O algoritmo deve ser "rápido" (importância da complexidade de algoritmo e da modelagem).
+- Uso da estrutura de dados adequada (modelagem).
+
+3. Categorias de Algoritmos (Paradigmas)
+- Método Guloso: Usando uma função critério, a cada passo seleciona a opção mais "saborosa" ou vantajosa no momento.
+- Divisão e Conquista: Divide o problema em instâncias menores para depois "conquistar" e combinar a solução global.
+- Tentativa e Erro (Força Bruta/Backtracking): A cada passo tenta todas as possibilidades até que uma delas produza uma solução válida.
+- Programação Dinâmica: Aplicável quando o problema satisfaz o princípio da otimalidade de Bellman (reaproveitamento de subproblemas sobrepostos).
+
+4. Exemplos Práticos Iniciais
+- Matrizes e Imagens: Como implementar imagens simples usando matrizes bidimensionais.
+- Sequência de Fibonacci: A inviabilidade da forma recursiva pura devido ao tempo de execução exponencial.
+- Problema de rotas: Circuito Euleriano (CE) e Algoritmo de Dijkstra para distâncias mínimas.
+- Multiplicação ótima de uma sequência de matrizes (Programação Dinâmica).
