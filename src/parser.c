@@ -5,7 +5,7 @@
 #define BLOCK_COMMENT 2
 #define NUM_DATA_TYPES 10
 #define NUM_COMMANDS 35
-#define NUM_DELIMITERS 11
+#define NUM_DELIMITERS 12
 
 char KEY_DATAS[][10] = {"bool",  "char",   "int",      "float", "double",
                         "short", "signed", "unsigned", "long",  "void"};
