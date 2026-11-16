@@ -1,0 +1,262 @@
+AULA 07: ALGORITMOS DE ORDENAÇÃO, INVARIANTES, MODULARIZAÇÃO E DEPURAÇÃO
+
+1. Paradigma Guloso e Algoritmos de Ordenação Quadráticos - O(n^2)
+- Relação com o Paradigma Guloso / Incremental:
+  Os algoritmos elementares de ordenação tomam decisões localmente ótimas a cada passo para construir gradualmente a sequência ordenada (escolhendo o menor elemento restante, ajustando pares fora de ordem ou inserindo o próximo item na posição correta). Por realizarem dois laços aninhados no pior caso, possuem complexidade de tempo quadrática, O(n^2).
+
+- Método 1: Seleção Direta (Selection Sort)
+  * Funcionamento: Percorre o vetor para encontrar o menor elemento da parte não ordenada e o coloca na primeira posição livre da parte ordenada.
+  * Invariante de Laço: No início de cada iteração i do laço externo, o subvetor de 0 até i-1 contém os i menores elementos do vetor original, já dispostos em ordem crescente.
+  * Complexidade: Realiza O(n^2) comparações em todos os casos (melhor, médio e pior), mas faz apenas O(n) trocas (no máximo uma troca por iteração externa).
+  * Implementação em C:
+    void ordena_selecao(int v[], int n) {
+        int i, j, min, aux;
+        for (i = 0; i < n - 1; i++) {
+            min = i;
+            for (j = i + 1; j < n; j++) {
+                if (v[j] < v[min]) {
+                    min = j;
+                }
+            }
+            if (min != i) {
+                aux = v[i];
+                v[i] = v[min];
+                v[min] = aux;
+            }
+        }
+    }
+
+- Método 2: Ordenação por Bolha (Bubble Sort)
+  * Funcionamento: Compara pares de elementos adjacentes e realiza a troca caso estejam fora de ordem, fazendo com que os maiores valores "flutuem" para o final do vetor a cada passagem.
+  * Invariante de Laço: Ao final da i-ésima passagem pelo vetor, os i maiores elementos estão posicionados definitivamente nas últimas i posições do vetor, em ordem crescente.
+  * Complexidade: O(n^2) no pior e no caso médio. Com uma variável de controle (flag) que detecta se houve troca na passagem, atinge O(n) no melhor caso (vetor já ordenado).
+  * Implementação em C:
+    void ordena_bolha(int v[], int n) {
+        int i, j, aux, trocou;
+        for (i = 0; i < n - 1; i++) {
+            trocou = 0;
+            for (j = 0; j < n - 1 - i; j++) {
+                if (v[j] > v[j + 1]) {
+                    aux = v[j];
+                    v[j] = v[j + 1];
+                    v[j + 1] = aux;
+                    trocou = 1;
+                }
+            }
+            if (!trocou) break;
+        }
+    }
+
+- Método 3: Inserção Direta (Insertion Sort)
+  * Funcionamento: Constrói o vetor ordenado um elemento por vez. Pega o próximo elemento (chave) e o insere na posição correta dentro da porção anterior já ordenada, deslocando os elementos maiores para a direita.
+  * Invariante de Laço: No início de cada iteração i, o subvetor de 0 até i-1 é formado pelos mesmos elementos que ocupavam essas posições originalmente, porém já ordenados entre si.
+  * Complexidade: O(n^2) no pior caso (vetor em ordem decrescente) e no caso médio. No melhor caso (vetor já ordenado), realiza apenas O(n) comparações. É muito rápido para entradas pequenas ou quase ordenadas.
+  * Implementação em C:
+    void ordena_insercao(int v[], int n) {
+        int i, j, chave;
+        for (i = 1; i < n; i++) {
+            chave = v[i];
+            j = i - 1;
+            while (j >= 0 && v[j] > chave) {
+                v[j + 1] = v[j];
+                j--;
+            }
+            v[j + 1] = chave;
+        }
+    }
+
+- [REFERÊNCIA EXTERNA: "Algoritmos: Teoria e Prática" (Cormen, Leiserson, Rivest, Stein), Capítulo 2 (Ordenação por Inserção, Invariantes de Laço e Análise de Algoritmos)].
+- [REFERÊNCIA EXTERNA: "Projeto de Algoritmos com Implementações em Pascal e C" (Nivio Ziviani), Capítulo 4 - Métodos Elementares de Ordenação Interna].
+
+---
+
+2. Métodos Mais Eficientes de Ordenação - O(n log n)
+
+- Ordenação por Fusão (Merge Sort)
+  * Paradigma: Divisão e Conquista.
+  * Funcionamento e Invariante: Divide o vetor recursivamente ao meio até obter subvetores unitários. Em seguida, intercala (funde) pares de subvetores ordenados em um subvetor maior também ordenado. O invariante da intercalação garante que, a cada passo, o vetor auxiliar contém os menores elementos já examinados das duas metades em ordem crescente.
+  * Por que a complexidade é O(n log n)?
+    A divisão sucessiva por 2 cria uma árvore de recursão com altura igual a log2(n). Em cada nível dessa árvore, o processo de intercalação percorre todos os n elementos exatamente uma vez, custando O(n) por nível. Multiplicando o custo por nível pela altura da árvore, obtém-se O(n log n) garantido no melhor, médio e pior caso. Como desvantagem, exige O(n) de memória extra para o vetor auxiliar de intercalação.
+  * Implementação em C:
+    void intercala(int v[], int esq, int meio, int dir) {
+        int i = esq, j = meio + 1, k = 0;
+        int tam = dir - esq + 1;
+        int *aux = (int *) malloc(tam * sizeof(int));
+        if (!aux) return;
+
+        while (i <= meio && j <= dir) {
+            if (v[i] <= v[j]) aux[k++] = v[i++];
+            else aux[k++] = v[j++];
+        }
+        while (i <= meio) aux[k++] = v[i++];
+        while (j <= dir) aux[k++] = v[j++];
+
+        for (i = esq, k = 0; i <= dir; i++, k++) {
+            v[i] = aux[k];
+        }
+        free(aux);
+    }
+
+    void ordena_fusao(int v[], int esq, int dir) {
+        if (esq < dir) {
+            int meio = esq + (dir - esq) / 2;
+            ordena_fusao(v, esq, meio);
+            ordena_fusao(v, meio + 1, dir);
+            intercala(v, esq, meio, dir);
+        }
+    }
+
+- Ordenação por Monte (Heap Sort)
+  * Funcionamento e Invariante: Utiliza uma estrutura de Heap Máximo. Como visto em aulas anteriores sobre grafos e árvores, trata-se de uma árvore binária quase completa mapeada perfeitamente em um vetor. Para um nó no índice i, seu filho esquerdo está em 2i+1 e seu filho direito em 2i+2. No Heap Máximo, o valor do pai é sempre maior ou igual aos seus filhos. 
+  * O algoritmo primeiro transforma o vetor desordenado em um Heap Máximo. Depois, repete n-1 vezes: troca a raiz (o maior elemento do array, no índice 0) com o último elemento do heap atual, reduz o tamanho virtual do heap em 1 e restaura a propriedade de heap descendo a nova raiz até a sua posição correta (operação "refaz_heap").
+  * Invariante de Laço: No início de cada iteração de extração, o subvetor da esquerda (0 até i) forma um Heap Máximo válido contendo os i+1 menores elementos globais, enquanto o subvetor da direita (i+1 até n-1) já contém os maiores elementos em sua posição ordenada final.
+  * Por que a complexidade é O(n log n)?
+    A construção inicial do heap custa tempo linear O(n). Em seguida, são feitas n-1 extrações; a função que restaura o heap desce pela altura da árvore, que é log2(n). Assim, O(n) + (n - 1) * O(log n) = O(n log n) em todos os casos, ocupando apenas O(1) de espaço extra na memória (in-place).
+  * Implementação em C:
+    void refaz_heap(int v[], int n, int i) {
+        int maior = i;
+        int esq = 2 * i + 1;
+        int dir = 2 * i + 2;
+        int aux;
+
+        if (esq < n && v[esq] > v[maior]) maior = esq;
+        if (dir < n && v[dir] > v[maior]) maior = dir;
+
+        if (maior != i) {
+            aux = v[i];
+            v[i] = v[maior];
+            v[maior] = aux;
+            refaz_heap(v, n, maior);
+        }
+    }
+
+    void ordena_monte(int v[], int n) {
+        int i, aux;
+        for (i = n / 2 - 1; i >= 0; i--) {
+            refaz_heap(v, n, i);
+        }
+        for (i = n - 1; i > 0; i--) {
+            aux = v[0];
+            v[0] = v[i];
+            v[i] = aux;
+            refaz_heap(v, i, 0);
+        }
+    }
+
+- Ordenação Rápida (Quick Sort)
+  * Paradigma: Divisão e Conquista.
+  * Funcionamento e Invariante: Escolhe um elemento da matriz como "pivô" e reorganiza (particiona) o vetor. A lógica de particionamento garante o seguinte invariante: ao final do processo, todos os elementos à esquerda do pivô são menores ou iguais a ele, todos à direita são maiores, e o pivô já está na sua posição final e definitiva. Em seguida, ordena-se recursivamente as duas sub-regiões geradas.
+  * Complexidade e Exemplo de Pior Caso Quadrático - O(n^2):
+    No caso médio, o pivô divide o vetor em metades, resultando em chamadas balanceadas e tempo O(n log n). Contudo, o pior caso emerge quando o vetor é dividido de forma extremamente desigual a cada recursão (uma parte com n-1 elementos e a outra vazia).
+  * Construção do Exemplo Quadrático:
+    Se a implementação sempre escolhe o último elemento como pivô e recebe um vetor já ordenado (ex: v = [10, 20, 30, 40, 50]):
+    - Passo 1: Pivô = 50. Menores: [10, 20, 30, 40] (tamanho 4). Maiores: vazia (tamanho 0).
+    - Passo 2: Pivô = 40. Menores: [10, 20, 30] (tamanho 3). Maiores: vazia.
+    O número de comparações será (n-1) + (n-2) + ... + 1, resultando na complexidade O(n^2).
+  * Soluções Práticas para evitar o Pior Caso:
+    Em implementações do mundo real, modificamos a escolha do pivô para fugir de distribuições viciadas. As técnicas comuns são: 
+    1) Pivô Aleatório (sorteia a posição do pivô antes de particionar). 
+    2) Mediana de Três (escolhe o primeiro, o do meio e o último elemento do subvetor e usa o valor mediano entre eles como pivô).
+  * Implementação em C:
+    int particiona(int v[], int esq, int dir) {
+        int pivo = v[dir];
+        int i = esq - 1;
+        int j, aux;
+        for (j = esq; j < dir; j++) {
+            if (v[j] <= pivo) {
+                i++;
+                aux = v[i];
+                v[i] = v[j];
+                v[j] = aux;
+            }
+        }
+        aux = v[i + 1];
+        v[i + 1] = v[dir];
+        v[dir] = aux;
+        return i + 1;
+    }
+
+    void ordena_rapido(int v[], int esq, int dir) {
+        if (esq < dir) {
+            int p = particiona(v, esq, dir);
+            ordena_rapido(v, esq, p - 1);
+            ordena_rapido(v, p + 1, dir);
+        }
+    }
+
+- [REFERÊNCIA EXTERNA: "Algoritmos: Teoria e Prática" (Cormen et al.), Capítulo 6 (Heapsort) e Capítulo 7 (Quicksort, análise do pior caso e versões aleatorizadas)].
+- [REFERÊNCIA EXTERNA: "Algorithms" (Robert Sedgewick e Kevin Wayne), Capítulo 2 - Mergesort, Quicksort e Priority Queues].
+
+---
+
+3. Modularização em C e Arquivos de Cabeçalho (*.h)
+- Conceito de Biblioteca de Códigos:
+  Dividir um projeto grande em vários arquivos permite isolar cada método de ordenação em seu próprio módulo (um arquivo .h com as declarações das funções e um arquivo .c com suas implementações correspondentes). Isso facilita a manutenção e evita arquivos de milhares de linhas.
+- Uso de Diretivas de Guarda (#ifndef / #define / #endif):
+  Elas impedem o erro de "múltipla definição", que ocorre quando o compilador acidentalmente tenta ler e incluir o mesmo arquivo de cabeçalho mais de uma vez ao longo da compilação.
+
+- Arquivos de Cabeçalho (*.h) preparados para os métodos de ordenação:
+
+  /* arquivo: ordena_selecao.h */
+  #ifndef ORDENA_SELECAO_H
+  #define ORDENA_SELECAO_H
+  void ordena_selecao(int v[], int n);
+  #endif
+
+  /* arquivo: ordena_bolha.h */
+  #ifndef ORDENA_BOLHA_H
+  #define ORDENA_BOLHA_H
+  void ordena_bolha(int v[], int n);
+  #endif
+
+  /* arquivo: ordena_insercao.h */
+  #ifndef ORDENA_INSERCAO_H
+  #define ORDENA_INSERCAO_H
+  void ordena_insercao(int v[], int n);
+  #endif
+  
+  /* arquivo: ordena_rapido.h */
+  #ifndef ORDENA_RAPIDO_H
+  #define ORDENA_RAPIDO_H
+  void ordena_rapido(int v[], int esq, int dir);
+  #endif
+
+- Exemplo de Integração no Programa Principal (aula_07_compara_metodos.c):
+  Para usar essas funções modulares, o programa que fará as invocações precisa importar as assinaturas no seu cabeçalho:
+
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include "ordena_selecao.h"
+  #include "ordena_bolha.h"
+  #include "ordena_insercao.h"
+  #include "ordena_rapido.h"
+
+  int main() {
+      int vetor[5] = {50, 40, 30, 20, 10};
+      ordena_bolha(vetor, 5); 
+      return 0;
+  }
+
+- [REFERÊNCIA EXTERNA: "C: A Reference Manual" (Samuel P. Harbison e Guy L. Steele) - Pré-processador, Arquivos de Cabeçalho e Compilação Separada].
+
+---
+
+4. Depuração de Dimensão de Vetor e Comandos de Compilação no GCC
+- Observação Prática sobre Limites de Vetores:
+  Lembre-se do problema em laboratório: em C, declarar um vetor como `int v[10]` significa que a memória foi alocada do índice 0 até o índice 9. Tentar rodar um laço acessando o índice 10 causa um "buffer overflow" (extravasamento de limite). Esse erro muitas vezes ocorre silenciosamente em C, corrompendo outras variáveis do sistema, até que o programa quebre inesperadamente (Segmentation Fault).
+- Comandos de Compilação para Diagnóstico e Prevenção:
+
+  1) Compilação para caçar vazamentos e invasões de memória (Address Sanitizer):
+     gcc -fsanitize=address -g -o aula_07_ordena_rapido.o aula_07_ordena_rapido.c
+
+  2) Compilação em modo restritivo exigindo código perfeitamente formatado no padrão ANSI C (C89):
+     gcc -std=c89 -Wall -Werror -Wextra -o codigos/aula_07_ordena_rapido.o codigos/aula_07_ordena_rapido.c
+
+- Significado Técnico das Flags:
+  * -fsanitize=address: Embutida no executável, vigia toda a leitura e escrita de memória. Se o programa acessar v[10], ela para a execução imediatamente e imprime a linha exata do código onde a falha ocorreu.
+  * -g: Exporta os metadados de depuração originais (nomes de variáveis, números de linhas) para o binário. Sem isso, ferramentas de análise mostrariam apenas endereços hexadecimais incompreensíveis.
+  * -std=c89: Trava a validação do compilador no padrão C89. Regras principais: declaração de variáveis unicamente no início do bloco e impossibilidade de usar barras duplas // para comentários.
+  * -Wall e -Wextra: Exigem que o compilador denuncie códigos perigosos, mas sintaticamente corretos (ex: variáveis declaradas mas nunca usadas, ou "if(a = b)" em vez de "if(a == b)").
+  * -Werror: Eleva o nível de exigência. Transforma qualquer alerta (warning) em um erro fatal que impede a geração do executável. O código precisa estar absolutamente limpo para compilar.
+
+- [REFERÊNCIA EXTERNA: Documentação Oficial do GNU Compiler Collection (GCC) - Opções de Instrumentação (-fsanitize=address), Padrões de Linguagem (-std=c89) e Diagnósticos (-Wall, -Wextra, -Werror)].
