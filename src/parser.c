@@ -48,7 +48,8 @@ char KEY_COMMANDS[][15] = {
     "while",
 };
 
-char DELIMITERS[] = {' ', '\n', '\t', '(', ')', '[', ']', '{', '}', '*', ';'};
+char DELIMITERS[] = {' ', '\n', '\t', '(', ')', '[',
+                     ']', '{',  '}',  '*', ';', ','};
 
 enum COLOR {
   NO_COLOR,
@@ -68,35 +69,8 @@ int isCommand(char srcCode[], int *idx);
 void parse_syntax(char srcCode[], int *idx, enum COLOR *state);
 void parse_special_chars(char srcCode[], char f_code[], int *text_size,
                          int start);
-void print_f_code(char f_code[], int text_size, enum COLOR state);
-
-int main(int argc, char *argv[]) {
-
-  // char text[] = "// Hello World\n#include <stdio.h>\nint main () {\n"
-  //               "\tprintf(\"Hello World\\n\");"
-  //               "\n\treturn 0;\n}";
-
-  char text[1000000];
-  int t = 0;
-  while (scanf("%c", &(text[t++])) != EOF) {
-  }
-  int idx = 0;
-  enum COLOR color = NO_COLOR;
-
-  while (idx < strlen(text)) {
-    int start = idx;
-    enum COLOR previousColor = color;
-    parse_syntax(text, &idx, &color);
-    int text_size = idx - start;
-    char f_text[1000000];
-    parse_special_chars(text, f_text, &text_size, start);
-    if (previousColor != color)
-      printf("\n");
-    print_f_code(f_text, text_size, color);
-  }
-
-  return 0;
-}
+void printCode(FILE *html, char f_code[], int text_size, enum COLOR state);
+void parseSrcCode(FILE *html, char srcCode[]);
 
 void parse_syntax(char srcCode[], int *idx, enum COLOR *state) {
 
@@ -236,8 +210,8 @@ void parse_syntax(char srcCode[], int *idx, enum COLOR *state) {
         *state = NO_COLOR;
         continue;
       }
-      if ((srcCode[*idx - 1] == '\\' && c == '\\' && next_c == closeString)
-          || c != '\\' && next_c == closeString) {
+      if ((srcCode[*idx - 1] == '\\' && c == '\\' && next_c == closeString) ||
+          c != '\\' && next_c == closeString) {
         *idx += 2;
         return;
       }
@@ -286,8 +260,8 @@ void parse_special_chars(char srcCode[], char f_code[], int *text_size,
       f_code[f_idx++] = 'b';
       f_code[f_idx++] = 'r';
       f_code[f_idx++] = '>';
-      // f_code[f_idx++] = '\n';
-      // f_code[f_idx++] = '\t';
+      f_code[f_idx++] = '\n';
+      f_code[f_idx++] = '\t';
       break;
     case '\t':
       f_code[f_idx++] = '&';
@@ -313,34 +287,42 @@ void parse_special_chars(char srcCode[], char f_code[], int *text_size,
   *text_size = f_idx;
 }
 
-void print_f_code(char f_code[], int text_size, enum COLOR state) {
+void printCode(FILE *html, char f_code[], int text_size, enum COLOR state) {
   switch (state) {
   case NO_COLOR:
-    printf("%.*s", text_size, f_code);
+    fprintf(html, "%.*s", text_size, f_code);
     break;
   case COMMENT:
-    printf("<span style=\"color: #3D7B7B;\">%.*s</span>", text_size, f_code);
+    fprintf(html, "<span style=\"color: #3D7B7B;\">%.*s</span>", text_size,
+            f_code);
     break;
   case PRAGMA:
-    printf("<span style=\"color: #9C6500;\">%.*s</span>", text_size, f_code);
+    fprintf(html, "<span style=\"color: #9C6500;\">%.*s</span>", text_size,
+            f_code);
     break;
   case LIB:
-    printf("<span style=\"color: #3D7B7B;\">%.*s</span>", text_size, f_code);
+    fprintf(html, "<span style=\"color: #3D7B7B;\">%.*s</span>", text_size,
+            f_code);
     break;
   case DATA_TYPE:
-    printf("<span style=\"color: #B00040;\">%.*s</span>", text_size, f_code);
+    fprintf(html, "<span style=\"color: #B00040;\">%.*s</span>", text_size,
+            f_code);
     break;
   case COMMAND:
-    printf("<span style=\"color: #008000;\">%.*s</span>", text_size, f_code);
+    fprintf(html, "<span style=\"color: #008000;\">%.*s</span>", text_size,
+            f_code);
     break;
   case FUNCTION:
-    printf("<span style=\"color: #00F;\">%.*s</span>", text_size, f_code);
+    fprintf(html, "<span style=\"color: #00F;\">%.*s</span>", text_size,
+            f_code);
     break;
   case STRING:
-    printf("<span style=\"color: #BA2121;\">%.*s</span>", text_size, f_code);
+    fprintf(html, "<span style=\"color: #BA2121;\">%.*s</span>", text_size,
+            f_code);
     break;
   case NUMBER:
-    printf("<span style=\"color: #666;\">%.*s</span>", text_size, f_code);
+    fprintf(html, "<span style=\"color: #666;\">%.*s</span>", text_size,
+            f_code);
     break;
   }
 }
@@ -385,4 +367,22 @@ int isDelimiter(char c) {
       return 1;
   }
   return 0;
+}
+
+void parseSrcCode(FILE *html, char srcCode[]) {
+  int idx = 0;
+  enum COLOR color = NO_COLOR;
+
+  while (idx < strlen(srcCode)) {
+    int start = idx;
+    enum COLOR previousColor = color;
+    parse_syntax(srcCode, &idx, &color);
+    int srcCode_size = idx - start;
+    char f_srcCode[1000000];
+    parse_special_chars(srcCode, f_srcCode, &srcCode_size, start);
+    if (previousColor != color) {
+      // fprintf(html, "<br>");
+    }
+    printCode(html, f_srcCode, srcCode_size, color);
+  }
 }

@@ -1,0 +1,25 @@
+1. Técnica: Iterativo (Força Bruta)
+2. Algoritmo: Seleção Direta (Selection Sort)
+3. Autores: Tradicional / Vários
+4. Data: Anos 1950 (formalização computacional)
+5. Conceitos: Ordenação, vetores, complexidade O(n^2), in-place
+6. Problema: Ordenar um vetor encontrando iterativamente o menor elemento da sublista não ordenada e trocando-o com o primeiro elemento dessa sublista.
+
+7. Complexidade: O(n^2)
+8. Semana: Semana 04
+9. Código:
+###INICIO DO CODIGO###
+#include <stdio.h>
+void selectionSort(int arr[], int n) {
+    int i, j, min_idx, temp;
+    for (i = 0; i < n-1; i++) {
+        min_idx = i;
+        for (j = i+1; j < n; j++)
+            if (arr[j] < arr[min_idx])
+                min_idx = j;
+        temp = arr[min_idx];
+        arr[min_idx] = arr[i];
+        arr[i] = temp;
+    }
+}
+###FIM DO CODIGO###
