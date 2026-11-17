@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "parser.c"
+#include "highlighter.c"
 
 #define MAX_LINHA 8192
 #define MAX_PAGINAS 1000
@@ -535,7 +535,7 @@ void gerar_pagina_conteudo(PaginaDados *pagina) {
         strstr(linha, "Algoritmo:") || strstr(linha, "Autores:") ||
         strstr(linha, "Data:") || strstr(linha, "Conceitos:") ||
         strstr(linha, "Problema:") || strstr(linha, "Complexidade:") ||
-        strstr(linha, "Semana:") || strstr(linha, "Código:")){
+        strstr(linha, "Semana:") || strstr(linha, "Código:")) {
       continue;
     }
 
