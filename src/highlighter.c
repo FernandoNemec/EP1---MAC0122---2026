@@ -3,9 +3,6 @@
 #include <string.h>
 #define LINE_COMMENT 1
 #define BLOCK_COMMENT 2
-#define NUM_DATA_TYPES 10
-#define NUM_COMMANDS 35
-#define NUM_DELIMITERS 12
 
 char KEY_DATAS[][10] = {"bool",  "char",   "int",      "float", "double",
                         "short", "signed", "unsigned", "long",  "void"};
@@ -48,8 +45,8 @@ char KEY_COMMANDS[][15] = {
     "while",
 };
 
-char DELIMITERS[] = {' ', '\n', '\t', '(', ')', '[',
-                     ']', '{',  '}',  '*', ';', ','};
+char DELIMITERS[] = {' ', '\n', '\t', '(', ')', '[', ']',
+                     '{', '}',  '*',  ';', ',', '='};
 
 enum COLOR {
   NO_COLOR,
@@ -63,10 +60,12 @@ enum COLOR {
   NUMBER
 };
 
+void parse_syntax(char srcCode[], int *idx, enum COLOR *state);
 int isDelimiter(char c);
+int searchKeyword(char srcCode[], int *idx, int numWords, int lenWords,
+                  char wordBank[][lenWords]);
 int isDataType(char srcCode[], int *idx);
 int isCommand(char srcCode[], int *idx);
-void parse_syntax(char srcCode[], int *idx, enum COLOR *state);
 void parse_special_chars(char srcCode[], char f_code[], int *text_size,
                          int start);
 void printCode(FILE *html, char f_code[], int text_size, enum COLOR state);
@@ -185,7 +184,7 @@ void parse_syntax(char srcCode[], int *idx, enum COLOR *state) {
 
     case DATA_TYPE:
       // Atribuir variavel ou type cast
-      if (c == '=' || c == ')' || c == '[' || c == ';') {
+      if (isDelimiter(c)) {
         *state = NO_COLOR;
         return;
       }
@@ -327,11 +326,12 @@ void printCode(FILE *html, char f_code[], int text_size, enum COLOR state) {
   }
 }
 
-int isDataType(char srcCode[], int *idx) {
+int searchKeyword(char srcCode[], int *idx, int numWords, int lenWords,
+                  char wordBank[][lenWords]) {
   if (*idx > 0 && !isDelimiter(srcCode[*idx - 1]))
     return 0;
-  for (int i = 0; i < NUM_DATA_TYPES; i++) {
-    char *keyword = KEY_DATAS[i];
+  for (int i = 0; i < numWords; i++) {
+    char *keyword = wordBank[i];
     for (int j = 0; j < strlen(keyword); j++) {
       if (srcCode[*idx + j] != keyword[j])
         break;
@@ -342,27 +342,23 @@ int isDataType(char srcCode[], int *idx) {
     }
   }
   return 0;
+}
+
+int isDataType(char srcCode[], int *idx) {
+  int numWords = sizeof KEY_DATAS / sizeof KEY_DATAS[0];
+  int lenWords = sizeof KEY_DATAS[0] / sizeof KEY_DATAS[0][0];
+  return searchKeyword(srcCode, idx, numWords, lenWords, KEY_DATAS);
 }
 
 int isCommand(char srcCode[], int *idx) {
-  if (*idx > 0 && !isDelimiter(srcCode[*idx - 1]))
-    return 0;
-  for (int i = 0; i < NUM_COMMANDS; i++) {
-    char *keyword = KEY_COMMANDS[i];
-    for (int j = 0; j < strlen(keyword); j++) {
-      if (srcCode[*idx + j] != keyword[j])
-        break;
-      if (j == strlen(keyword) - 1 && isDelimiter(srcCode[*idx + j + 1])) {
-        *idx += j + 1;
-        return 1;
-      }
-    }
-  }
-  return 0;
+  int numWords = sizeof KEY_COMMANDS / sizeof KEY_COMMANDS[0];
+  int lenWords = sizeof KEY_COMMANDS[0] / sizeof KEY_COMMANDS[0][0];
+  return searchKeyword(srcCode, idx, numWords, lenWords, KEY_COMMANDS);
 }
 
 int isDelimiter(char c) {
-  for (int i = 0; i < NUM_DELIMITERS; i++) {
+  int numDelimiters = sizeof DELIMITERS / sizeof DELIMITERS[0];
+  for (int i = 0; i < numDelimiters; i++) {
     if (c == DELIMITERS[i])
       return 1;
   }
